@@ -1,0 +1,9 @@
+// Auto Builder Named Command 單一資料來源。
+// 格式：AUTO_COMMAND(C++識別字, "儲存ID", "英文名稱", "中文名稱", C++動作)
+AUTO_COMMAND(StopAll, "stop-all", "STOP ALL", "全部停止", stopAllSubsystems())
+AUTO_COMMAND(IntakeForward, "intake-forward", "INTAKE FORWARD", "進料正轉", setIntakeMode(IntakeMode::Forward))
+AUTO_COMMAND(IntakeStop, "intake-stop", "INTAKE STOP", "停止進料", stopIntake())
+AUTO_COMMAND(ClampClose, "clamp-on", "CLAMP CLOSE", "夾具閉合", setIntakeClamp(true))
+AUTO_COMMAND(ClampOpen, "clamp-off", "CLAMP OPEN", "夾具開啟", setIntakeClamp(false))
+AUTO_COMMAND(ScoreExtend, "score-on", "SCORE EXTEND", "得分伸出", setScoringPiston(true))
+AUTO_COMMAND(ScoreRetract, "score-off", "SCORE RETRACT", "得分收回", setScoringPiston(false))

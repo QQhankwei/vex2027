@@ -9,8 +9,12 @@ include vex/mkenv.mk
 # location of the project source cpp and c files
 SRC_C  = $(wildcard src/*.cpp) 
 SRC_C += $(wildcard src/*.c)
-SRC_C += $(wildcard src/*/*.cpp) 
-SRC_C += $(wildcard src/*/*.c)
+
+# 正式使用完整 JAR-Template：PID、Drive、Odom 與共用工具只保留一套。
+SRC_C += $(wildcard src/JAR-Template/*.cpp)
+
+# JAR-Template 原始碼保留作為後續 PID / Odometry 教材。
+# 基礎階段尚未接入，因此目前不加入編譯來源。
 
 OBJ = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(SRC_C))) )
 

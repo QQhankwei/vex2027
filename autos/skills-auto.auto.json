@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "name": "skills-auto",
+  "commands": [
+    {
+      "type": "path",
+      "pathName": "skills-path"
+    },
+    {
+      "type": "intake-forward"
+    },
+    {
+      "type": "wait",
+      "seconds": 0.25
+    },
+    {
+      "type": "stop-all"
+    }
+  ]
+}

@@ -1,35 +1,29 @@
-using namespace vex;
+#pragma once
 
-extern brain Brain;
+#include "v5.h"
+#include "v5_vcs.h"
 
-// VEXcode devices
-extern motor L1;
-extern motor L2;
-extern motor L3;
-extern motor R1;
-extern motor R2;
-extern motor R3;
-extern optical Optical;
-extern optical Optical_go;
-extern inertial Inertial;
-extern controller Controller1;
-extern motor intake;
-extern motor intakedown;
-extern motor hang1;
-extern digital_out redlight;
-extern digital_out whitelight;
-extern digital_out intakeCylander;
-extern digital_out pushCylinder;
-extern digital_out shooter;
-extern digital_out aligner;
-extern vex::vision Vision1;
-extern vex::vision Vision2; 
+extern vex::brain Brain;
+extern vex::controller primaryController;
 
+extern vex::motor leftDriveFront;
+extern vex::motor leftDriveMiddle;
+extern vex::motor leftDriveRear;
+extern vex::motor rightDriveFront;
+extern vex::motor rightDriveMiddle;
+extern vex::motor rightDriveRear;
+extern vex::motor_group leftDrive;
+extern vex::motor_group rightDrive;
+extern vex::inertial imuSensor;
 
+// Intake：上層負責輸送，下層負責接取／送入。
+extern vex::motor intakeUpperMotor;
+extern vex::motor intakeLowerMotor;
 
-/**
- * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
- * 
- * This should be called at the start of your int main function.
- */
-void  vexcodeInit( void );
+// 氣動輸出：名稱描述機構用途，不再使用 A、B、G、H 當程式名稱。
+extern vex::digital_out ringRejectPiston;
+extern vex::digital_out intakeClampPiston;
+extern vex::digital_out scoringPiston;
+extern vex::digital_out alignmentPiston;
+
+void vexcodeInit();

@@ -1,0 +1,81 @@
+{
+  "version": 2,
+  "name": "test",
+  "drivetrain": "tank",
+  "holonomic": false,
+  "field": {
+    "widthIn": 144,
+    "heightIn": 144,
+    "origin": "bottom-left",
+    "headingZero": "+Y"
+  },
+  "robot": {
+    "widthIn": 13,
+    "lengthIn": 10
+  },
+  "points": [
+    {
+      "xIn": 12.53,
+      "yIn": 16.22,
+      "headingDeg": -3.88,
+      "velocityPct": 100,
+      "tangentDeg": -3.88,
+      "resolvedTangentDeg": -3.88,
+      "tangentStrength": 180
+    },
+    {
+      "xIn": 45.72,
+      "yIn": 42.95,
+      "headingDeg": 25.64,
+      "velocityPct": 100,
+      "tangentDeg": null,
+      "resolvedTangentDeg": 25.64,
+      "tangentStrength": 100
+    },
+    {
+      "xIn": 45.72,
+      "yIn": 85.36,
+      "headingDeg": 13.88,
+      "velocityPct": 100,
+      "tangentDeg": null,
+      "resolvedTangentDeg": 13.88,
+      "tangentStrength": 100
+    },
+    {
+      "xIn": 60.19,
+      "yIn": 101.52,
+      "headingDeg": 41.7,
+      "velocityPct": 60,
+      "tangentDeg": null,
+      "resolvedTangentDeg": 41.7,
+      "tangentStrength": 100
+    },
+    {
+      "xIn": 72.81,
+      "yIn": 115.76,
+      "headingDeg": 107.48,
+      "velocityPct": 95,
+      "tangentDeg": null,
+      "resolvedTangentDeg": 107.48,
+      "tangentStrength": 100
+    },
+    {
+      "xIn": 95.13,
+      "yIn": 90.52,
+      "headingDeg": 67.38,
+      "velocityPct": 100,
+      "tangentDeg": 67.38,
+      "resolvedTangentDeg": 67.38,
+      "tangentStrength": 64.70204992127883
+    },
+    {
+      "xIn": 113.58,
+      "yIn": 67.55,
+      "headingDeg": 141.23,
+      "velocityPct": 100,
+      "tangentDeg": null,
+      "resolvedTangentDeg": 141.23,
+      "tangentStrength": 100
+    }
+  ]
+}

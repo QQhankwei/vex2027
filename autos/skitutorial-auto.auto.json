@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "name": "skitutorial-auto",
+  "commands": [
+    {
+      "type": "intake-forward"
+    },
+    {
+      "type": "path",
+      "pathName": "skills-path"
+    },
+    {
+      "type": "intake-stop"
+    },
+    {
+      "type": "clamp-on"
+    },
+    {
+      "type": "wait",
+      "seconds": 0.25
+    },
+    {
+      "type": "stop-all"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+/*
+ * Tracking Wheels 實機接線範例（刻意使用 .disabled，不會參與正式編譯）。
+ *
+ * 啟用前必須：
+ * 1. 將 PORT10 / PORT6 改為真實且沒有被其他裝置占用的 Port。
+ * 2. 量測兩個追蹤輪直徑與輪子到旋轉中心的 signed offset。
+ * 3. 確認 sensorDegrees 正方向；方向相反時可乘以 -1。
+ * 4. 將更新迴圈維持在固定週期，不要同時啟動兩個 odometry task。
+ */
+
+#include "vex.h"
+
+using namespace vex;
+
+rotation forwardTrackingSensor = rotation(PORT10, false);
+rotation sidewaysTrackingSensor = rotation(PORT6, false);
+
+TrackingOdometry fieldOdometry(
+  robotParameters::FORWARD_TRACKING_WHEEL_OFFSET_IN,
+  robotParameters::SIDEWAYS_TRACKING_WHEEL_OFFSET_IN);
+
+int trackingTask()
+{
+  forwardTrackingSensor.resetPosition();
+  sidewaysTrackingSensor.resetPosition();
+
+  fieldOdometry.reset(0.0, 0.0, 0.0, 0.0, 0.0);
+
+  while (true)
+  {
+    const double forwardDistanceIn = trackingDegreesToInches(
+      forwardTrackingSensor.position(degrees),
+      robotParameters::FORWARD_TRACKING_WHEEL_DIAMETER_IN);
+    const double sidewaysDistanceIn = trackingDegreesToInches(
+      sidewaysTrackingSensor.position(degrees),
+      robotParameters::SIDEWAYS_TRACKING_WHEEL_DIAMETER_IN);
+
+    // rotation() 會持續累積，可跨越 0 / 360；比 heading() 更適合座標追蹤。
+    const double headingDeg = imuSensor.rotation(degrees);
+    fieldOdometry.update(forwardDistanceIn, sidewaysDistanceIn, headingDeg);
+
+    const Pose2D currentPose = fieldOdometry.pose();
+    Brain.Screen.printAt(10, 60, "X: %.2f in", currentPose.xIn);
+    Brain.Screen.printAt(10, 80, "Y: %.2f in", currentPose.yIn);
+    Brain.Screen.printAt(10, 100, "H: %.2f deg", currentPose.headingDeg);
+
+    wait(robotParameters::TASK_PERIOD_MS, msec);
+  }
+
+  return 0;
+}
+
+// 在 preAutonomous() 完成 IMU 校正後啟動：
+// task odometryTask(trackingTask);

@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "name": "skills-path",
+  "drivetrain": "tank",
+  "holonomic": false,
+  "field": {
+    "widthIn": 144,
+    "heightIn": 144,
+    "origin": "bottom-left",
+    "headingZero": "+Y"
+  },
+  "robot": {
+    "widthIn": 13,
+    "lengthIn": 10
+  },
+  "points": [
+    {
+      "xIn": 133.33,
+      "yIn": 9.41,
+      "headingDeg": 0,
+      "velocityPct": 60,
+      "tangentDeg": null,
+      "resolvedTangentDeg": 0,
+      "tangentStrength": 100
+    },
+    {
+      "xIn": 120.1,
+      "yIn": 76.14,
+      "headingDeg": -37.21,
+      "velocityPct": 60,
+      "tangentDeg": null,
+      "resolvedTangentDeg": -37.21,
+      "tangentStrength": 180
+    },
+    {
+      "xIn": 94.72,
+      "yIn": 60.25,
+      "headingDeg": -68.08,
+      "velocityPct": 60,
+      "tangentDeg": null,
+      "resolvedTangentDeg": -68.08,
+      "tangentStrength": 100
+    },
+    {
+      "xIn": 85.76,
+      "yIn": 89.96,
+      "headingDeg": -24.54,
+      "velocityPct": 60,
+      "tangentDeg": null,
+      "resolvedTangentDeg": -24.54,
+      "tangentStrength": 100
+    },
+    {
+      "xIn": 64.79,
+      "yIn": 125.79,
+      "headingDeg": -30.34,
+      "velocityPct": 60,
+      "tangentDeg": null,
+      "resolvedTangentDeg": -30.34,
+      "tangentStrength": 100
+    }
+  ]
+}

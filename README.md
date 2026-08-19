@@ -1,102 +1,214 @@
-# Team 88168A Robotics Project
+# VEX V5 Competition Teaching Template
 
-## Introduction
+## Desktop Simulator
 
-Welcome to **Team 88168A's Robotics Project** repository! This repository contains the source code for our team's robot, which is used in various robotics competitions. We leverage the **VEX Robotics platform** for both the hardware and software, with our code built to control the robot's movements and actions during matches.
+沒有 V5 Brain 時，可在 VS Code 執行工作 `VEX Simulator: Start`，使用本機
+瀏覽器測試遙控配置、Intake、氣壓與 autonomous path。操作方式請見
+[`GETTING_STARTED.md`](GETTING_STARTED.md)。
 
-Our team is dedicated to developing **efficient**, **innovative**, and **competitive solutions** for both autonomous and driver-controlled operations. We integrate **advanced control systems**, **sensors**, and **feedback loops** to ensure smooth and effective functionality in competitive environments.
+交給其他 Windows 使用者時，也可以直接雙擊專案根目錄的
+`啟動模擬器.bat`。第一次使用前需安裝 Node.js LTS 與 Visual Studio 2022
+Build Tools（Desktop development with C++）。重複啟動時，腳本會安全關閉
+舊模擬核心、重新編譯目前 C++，再開啟新版頁面。
 
-## Project Structure
+由 Team 88168A 競賽程式重新整理的教學骨架。原始版本曾在台灣賽事達到
+Rank 2；新版保留 JAR-Template，並將硬體、子系統、遙控、自動程式與
+座標追蹤分層，方便學生逐步理解與擴充。
 
-This project is based on the **VEX Robotics V5 system**, with the code written in **C++** using the VEX V5 C++ API. The repository is organized into several key components to manage the robot's functions and capabilities:
+第一次拿到本專案，請先依照 [`GETTING_STARTED.md`](GETTING_STARTED.md)
+完成環境、硬體、遙控與短 Auto 測試。
 
-- **Autonomous Code**: This code runs when the robot is operating autonomously, i.e., without any input from the driver. It includes functions to control the robot’s movements, sensor inputs, and actions, based on pre-programmed strategies.
-- **Driver Control Code**: This section handles inputs from the controller, allowing real-time control over the robot’s motors, sensors, and actuators during the driver-controlled period of a match.
-- **Sensor Integration**: We utilize various sensors, such as optical sensors and encoders, to enhance the robot's autonomous navigation and provide feedback during the match for better decision-making.
-- **Subsystems**: The robot includes multiple subsystems, including the drivetrain, intake system, and arm mechanism. These subsystems are controlled independently to optimize performance during a match.
+## 架構
 
-## Key Features
+```text
+比賽流程
+└─ main.cpp
+   ├─ preAutonomous()       開機與 IMU 校正
+   ├─ autonomous()          選擇一個 auton routine
+   └─ driverControl()       固定週期更新遙控功能
 
-- **Autonomous Movement**: The robot can move and interact with the environment based on pre-programmed strategies, such as navigating the field, manipulating objects, and scoring goals autonomously.
-- **Tank Drive Control**: The robot uses tank drive, where the left and right motors are controlled by joystick inputs. The left joystick controls the left side of the robot, and the right joystick controls the right side.
-- **Arm Control**: A custom arm control logic ensures precise movement and positioning of the robot’s arm, based on sensor feedback, allowing the robot to interact with game elements effectively.
-- **Sensor Feedback**: The robot uses sensors to detect objects, adjust its path, and interact with the environment. For example, sensors are used to detect nearby obstacles or the position of game pieces.
+硬體配置
+├─ robot-config.h/.cpp      Port、反轉、齒輪匣、三線輸出
+└─ robot-parameters.h       單位、速度、尺寸、追蹤輪參數
 
-## Key Components and Functions
+可重用子系統
+├─ drive-control            Tank Drive 與 deadband
+├─ intake-control           Intake 狀態機
+├─ pneumatic-control        氣動 set / toggle / reset
+├─ driver-control           控制器映射與優先權
+├─ autonomous-routines      自動程式組合入口
+├─ autonomous-drive         Encoder / IMU / PID 閉迴路動作
+├─ JAR-Template/PID         唯一且可重用的 PID 計算核心
+└─ tracking-odometry        Tracking Wheels 座標計算核心
 
-Here are some of the important functions implemented in our code:
+進階框架（保留，基礎版暫不編譯）
+└─ JAR-Template
+   ├─ PID
+   ├─ Drive
+   ├─ Odom
+   └─ Util
+```
 
-- **`control_tank()`**: This function controls the left and right drive motors based on joystick inputs from the controller, with deadband adjustments for smooth control.
-- **`noteTask()`**: Handles autonomous behaviors, such as detecting and interacting with objects based on the selected team color. It controls the intake system and other mechanisms for pre-programmed strategies.
-- **`hangTask()`**: Manages the robot’s hanging mechanism during autonomous or driver control, responding to button inputs to adjust the position of the robot’s arm.
-- **`position_track_task()`**: Ensures the robot maintains its heading and position throughout the match using real-time tracking.
-- **`momogo_task()`**: Utilizes optical sensors to detect the distance to a mobile goal, changing the LED indicator lights accordingly: flashing lights indicate proximity, a green light shows that pneumatic pressure is off, and a red light means pneumatic pressure is on.
-- **`intake_task()`**: This function controls the robot's intake system based on the controller's button inputs. It uses R1 to activate the intake motor for forward rotation (to pick up game pieces) and R2 to activate the motor for reverse rotation (to eject or reverse the intake direction). The function adjusts the motor speed accordingly and ensures smooth operation of the intake system, allowing the driver to control the intake's direction in real-time during the match.
+## 控制器配置範例
 
-## Setup
+| 輸入 | 功能 | 控制方式 |
+|---|---|---|
+| Axis3 | 左側底盤 | 持續讀取 |
+| Axis2 | 右側底盤 | 持續讀取 |
+| A | Upper Intake 正轉 | 按住運轉、放開停止 |
+| B | Upper Intake 反轉 | 按住運轉、放開停止 |
+| X | Intake 正轉 Toggle 範例 | 按一下運轉、再按一下停止 |
+| R1 | Intake 正轉 | 按住 |
+| R2 | Intake 反轉 | 按住 |
+| L1 | 只有下層 Intake 正轉 | 按住 |
+| L2 | 只有下層 Intake 反轉 | 按住 |
+| Right | Intake Clamp 氣動 | 每按一次切換 |
+| Up | Scoring 氣動 Hold 範例 | 按住 true、放開恢復 Toggle 狀態 |
+| Y | Scoring 氣動 | 第一次 true、第二次 false |
+| Down | Alignment 氣動 | 每按一次切換 |
+| Left | Ring Reject 氣動 | 每按一次切換 |
 
-To get started with this project, follow these steps:
+持續動作使用 `pressing()` 放在固定週期迴圈；保持狀態的氣動功能使用
+`pressed(callback)`，避免每個迴圈重複切換。
 
-1. **Clone the repository** to your local machine.
-2. **Open the project** in **VEXcode V5** or your preferred C++ IDE for VEX Robotics.
-3. **Connect the VEX V5 robot** to your computer using a USB cable.
-4. **Build and download the code** to the robot's brain.
+馬達也可以使用 `pressed(callback)` 做 Toggle。本範本以 A 的 Upper Hold
+與 X 的上下 Intake Toggle 比較兩種控制方式。Hold 類按鍵具有較高優先權；
+放開 Hold 後，程式會回到 X 鍵保存的 Toggle 狀態。
 
-## Usage
+氣動使用相同設計：Up 暫時把 `scoringPiston` 設為 `true`，Y 保存長期的
+Toggle 狀態。放開 Up 後不會盲目寫入 `false`，而是恢復 Y 先前保存的狀態。
 
-### Autonomous Path
+## 硬體配置
 
-The robot automatically performs pre-defined tasks at the start of the match, based on the selected team color and programmed strategy. Some example strategies include:
-||Alliance stack 4or5 ring|** Solo AWP ** :trophy:|Alliance stack 2or3 ring|
-|--|--|--|--|
-||<img src="path/VEX_RW_right.png" alt="RED R5 or RW" width="300" />|<img src="path/VEX_RED_SOLO.png" alt="RED SOLO" width="300" style="margin-right: 20px;" />|<img src="path/VEX_RW_left.png" alt="RED R5 or RW" width="300" />
-|Average Rings|4~5|3|2~3|
-|Average Mobile goals|1|2|1|
+| 名稱 | Port | 類型 | 說明 |
+|---|---:|---|---|
+| leftDriveFront | 1 | 6:1 Motor | 左前底盤 |
+| leftDriveMiddle | 2 | 6:1 Motor | 左中底盤 |
+| leftDriveRear | 3 | 6:1 Motor | 左後底盤 |
+| rightDriveFront | 7 | 6:1 Motor | 右前底盤 |
+| rightDriveMiddle | 8 | 6:1 Motor | 右中底盤 |
+| rightDriveRear | 9 | 6:1 Motor | 右後底盤 |
+| intakeLowerMotor | 11 | 6:1 Motor | 下層 Intake |
+| imuSensor | 12 | Inertial | 方向回授 |
+| intakeUpperMotor | 14 | 6:1 Motor | 上層 Intake |
+| ringRejectPiston | A | Digital Out | 異色環排除 |
+| intakeClampPiston | B | Digital Out | Intake 夾持 |
+| scoringPiston | G | Digital Out | 得分機構 |
+| alignmentPiston | H | Digital Out | 對位機構 |
 
-### Driver Control
+此表沿用競賽版本的接線基底；正式下載前必須依實機逐項確認。
 
-In the driver-controlled period of the match, the robot is controlled using the **VEX controller**. The joystick inputs control the movement of the robot:
+## 單位規範
 
-- The **left joystick** controls the left side of the robot.
-- The **right joystick** controls the right side.
-  
-Additionally, the intake and arm systems can be controlled with specific buttons on the controller for tasks like lifting, lowering, or positioning objects.
+- 距離：英吋，後綴 `_IN`
+- 角度：度，後綴 `_DEG`
+- 時間：毫秒，後綴 `_MS`
+- 速度：百分比，後綴 `_PERCENT`
+- 電壓：伏特，後綴 `_VOLT`
+- 裝置與函式：`lowerCamelCase`
+- 型別：`UpperCamelCase`
+- 常數：`UPPER_SNAKE_CASE`
 
-### Arm and Intake Control
+## Tracking Wheels
 
-The intake and arm systems are controlled using buttons on the VEX controller. These systems are designed to efficiently handle and manipulate objects during the match, ensuring precise movement and positioning based on sensor feedback.
-## Onboard Electronics
+`TrackingOdometry` 本身不綁定 Port，只接受：
 
-### Motors
+1. 前向追蹤輪累積距離（英吋）。
+2. 側向追蹤輪累積距離（英吋）。
+3. IMU 累積角度（度）。
 
-|Subsystem|Type|Name|Port:ID|Note|
-|--|--|--|--|--|
-|Chassis|11W motor|Drive|1,3,4,6,9,10|L1,L2,L3,R1,R2,R3|
-|Intake|5.5W motor|Drive|11,14|down,mid|
-|Arm|11W motor|Drive|19|hang1|
+實機接法範例位於
+`examples/tracking-wheels-coordinate-example.cpp.disabled`。確認 Port、輪徑、
+offset 和正方向後才能移入正式程式。
 
-### Sensors 
+座標定義：
 
-|Subsystem|Port:ID|Note|
-|--|--|--|
-|Inertial|5|gyro|
-|Optical|7|see ring|
-|Optical_go|12|see moblie go|
-|Vision|13,15|light support|
-|light|C,D|redlight,whitelight|
-|Pneumatic cylinder|A,B,G|pushCylinder,intakeCylander,hookCylinder|
+- 原點由 `reset()` 決定。
+- X 正方向為場地右方。
+- Y 正方向為機器人初始前方。
+- 0 度代表朝向 +Y。
 
+## 閉迴路 Auto 範例
 
+`runClosedLoopAutonomousExample()` 示範完整路徑：
 
-## Acknowledgements
+1. IMU 當前方向歸零。
+2. Intake 正轉，同時用 Encoder 定距前進 24 in，IMU 維持 0 deg。
+3. Intake Clamp 氣缸設為 `true`。
+4. 使用 IMU PID 原地轉到絕對 90 deg。
+5. 保持 90 deg 前進 12 in。
+6. Alignment 與 Scoring 氣缸伸出、等待 300 ms、收回。
+7. 保持 90 deg 後退 6 in。
+8. 停止所有子系統並重設氣動。
 
-- **VEX Robotics** for their hardware and software support.
-- **HappyrobotTaipei** for their contributions to the development.
-- **Team 88168A** for their hard work, dedication, and passion for robotics.
-- Special thanks to **R.T.1.3**, **Lego Lau mo**, and **Teng Lau** for their support.
+每一段閉迴路動作都有 tolerance、settle time 與 timeout，避免單一 PID 永久
+卡住。Auto 路徑採用線性動作清單寫法，方便學生閱讀和快速修改。
 
----
+要啟用時，只在 `main.cpp` 的 `autonomous()` 保留：
 
-Feel free to explore, modify, and contribute to this repository as we continue to enhance our robot’s capabilities for future competitions. Thank you for your interest in Team 88168A’s robotics project!
+```cpp
+void autonomous()
+{
+  runClosedLoopAutonomousExample();
+}
+```
 
----
+PID 計算與使用方式已恢復為原生 JAR-Template；預設常數沿用舊競賽程式的
+`default_constants()`。硬體重量或齒比改變時仍需依實機重新驗證。
+
+### JAR-Template PID 設定方式
+
+`configureChassisConstants()` 會在開機時設定原生 JAR Drive、Heading、Turn、
+Swing PID。一般路徑直接使用這組設定：
+
+```cpp
+driveDistanceIn(24.0, 0.0);
+turnToHeadingDeg(90.0);
+```
+
+需要針對下一段動作調參時，沿用原本 JAR-Template 寫法：
+
+```cpp
+chassis.set_drive_constants(12, 0.5, 0.004, 5, 20);
+chassis.set_heading_constants(12, 0.25, 0.007, 5, 40);
+driveDistanceIn(12.0, 90.0);
+
+chassis.set_turn_constants(8, 0.30, 0.001, 2.5, 60);
+turnToHeadingDeg(90.0);
+```
+
+參數順序與原生 JAR 相同：`max_voltage, kp, ki, kd, starti`。設定會持續
+套用到後續動作，直到再次呼叫 `set_*_constants()` 或重新執行預設設定。
+
+## 座標移動
+
+目前可直接使用：
+
+```cpp
+setRobotPose(0.0, 0.0, 0.0);
+driveToPoint(0.0, 24.0);
+turnToPoint(24.0, 36.0);
+driveToPose(24.0, 36.0, 90.0);
+```
+
+現階段座標來源為底盤 Encoder＋IMU，側向距離視為 0，適合無 Tracking Wheel
+的 Tank Drive。接上實體 Tracking Wheels 後，只需替換座標來源，不需要修改
+Auto 路徑的函式名稱。
+
+## Build
+
+使用 VS Code 開啟整個專案資料夾，並安裝官方 `VEX Robotics` Extension。
+工作區必須設為 Trusted。VEX Extension 下方狀態列出現 Build 圖示後即可編譯。
+
+目前版本已使用 V5 SDK `V5_20240802_15_00_00` 編譯成功。
+
+## 建議教學順序
+
+1. `robot-config.cpp`：Port、反轉與齒輪匣。
+2. `robot-parameters.h`：單位與集中參數。
+3. `drive-control.cpp`：輸入、deadband、輸出。
+4. `driver-control.cpp`：按住、按一下與功能優先權。
+5. Intake 與 pneumatic 子系統。
+6. `autonomous-routines.cpp`：用既有介面組合動作。
+7. `tracking-odometry.cpp`：局部位移到場地座標。
+8. 最後接回 JAR-Template 的 PID、定距、轉向與座標移動。

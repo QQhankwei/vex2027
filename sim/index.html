@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VEX Desktop Simulator</title>
+<script src="/override-field.js?v=1"></script>
+<style>
+:root{color-scheme:dark;--bg:#101820;--panel:#18232d;--panel2:#22303c;--line:#3c4d5a;--text:#f2f7fa;--muted:#9babb6;--accent:#8f82ff;--green:#63e6a6;--red:#ff6876;--blue:#55c2ff;--yellow:#ffd166}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px "Segoe UI",sans-serif}.menu,.tabs,.status{display:flex;align-items:center;gap:18px;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--line)}.menu{height:46px;justify-content:space-between}.brand{color:var(--accent);font-weight:600}.connected{color:var(--green)}.tabs button{padding:11px 15px;background:none;color:var(--muted);border:0;border-bottom:3px solid transparent;cursor:pointer}.tabs button.active{color:var(--text);border-color:var(--accent)}main{padding:14px}.page{display:none}.page.active{display:grid}.teleop{grid-template-columns:minmax(390px,1fr) minmax(340px,.9fr);gap:14px}.widget{background:var(--panel);border:1px solid var(--line);border-radius:5px;overflow:hidden}.title{padding:8px 11px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.controller{padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:14px}.shoulders{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:7px}button,select{font:inherit}.key,.control{padding:9px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:4px;cursor:pointer}.key small{display:block;color:var(--muted)}.key.on{background:var(--accent);color:#fff}.sticks{display:grid;gap:9px;align-content:center}.sticks input{width:100%;accent-color:var(--accent)}.face{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.side{display:grid;gap:14px;align-content:start}.readout{padding:12px}.action{border-left:4px solid var(--accent);padding:10px;background:var(--panel2)}.row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}.value{font-family:Consolas,monospace;color:var(--muted)}.value.on{color:var(--green)}.robot-diagram{height:180px;position:relative;background:var(--panel2);margin-top:10px}.chassis{position:absolute;width:150px;height:100px;left:50%;top:50%;transform:translate(-50%,-50%);border:3px solid var(--accent)}.wheel{position:absolute;width:12px;height:42px;background:var(--muted)}.w1{left:-15px;top:4px}.w2{left:-15px;bottom:4px}.w3{right:-15px;top:4px}.w4{right:-15px;bottom:4px}.intake-line{position:absolute;left:25px;right:25px;height:7px;background:var(--muted)}.upper{top:25px}.lower{bottom:25px}.intake-line.run{background:var(--green)}.piston{position:absolute;width:5px;height:28px;background:var(--muted);transition:height .15s}.piston.extend{height:50px;background:var(--yellow)}.p1{left:15px;top:-3px}.p2{right:15px;top:-3px}.p3{left:15px;bottom:-3px}.p4{right:15px;bottom:-3px}.auto{grid-template-columns:minmax(480px,1.25fr) minmax(300px,.75fr);gap:14px}.toolbar{grid-column:1/-1;display:grid;grid-template-columns:1fr auto auto auto;gap:8px}.field{width:100%;aspect-ratio:1;background:var(--panel2);border:4px solid var(--line)}.tile{fill:var(--panel2);stroke:var(--line);stroke-width:.5}.goal{fill:var(--panel);stroke:var(--green);stroke-width:2}.goal.colliding{stroke:var(--red)}.path{fill:none;stroke:var(--blue);stroke-width:1.2}.done{fill:none;stroke:var(--green);stroke-width:1.2}#driverTrail{stroke:var(--blue);stroke-width:.6;opacity:.72}.robot{fill:var(--red);stroke:var(--text);stroke-width:.8}.sequence{padding:12px}.step{padding:8px 0;border-bottom:1px solid var(--line)}.step.active{color:var(--yellow)}.status{padding:7px 16px;justify-content:space-between;color:var(--muted)}@media(max-width:760px){.teleop,.auto{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr 1fr 1fr}.toolbar select{grid-column:1/-1}}
+</style>
+<style>
+html{overflow-y:scroll;scrollbar-gutter:stable}
+body{min-height:100vh;overflow-x:hidden}
+.field{display:block}
+#driverPoseCoreText{min-width:260px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.selector-page{grid-template-columns:minmax(520px,1.2fr) minmax(300px,.8fr);gap:14px;align-items:start}.brain-shell{padding:34px 42px;background:#343a40;border:8px solid #59616a;border-radius:38px;box-shadow:inset 0 0 0 3px #1b2025}.brain-screen{aspect-ratio:480/272;padding:18px;background:#090d11;border:5px solid #151a1f;border-radius:7px;display:grid;grid-template-rows:auto 1fr auto;gap:12px}.brain-header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #2b343d;padding-bottom:9px}.brain-header strong{color:#f4b942;letter-spacing:.08em}.brain-auto-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;align-content:start}.brain-auto-button{padding:12px;text-align:left;background:#18232d;color:var(--text);border:2px solid #3c4d5a;border-radius:4px;cursor:pointer}.brain-auto-button small{display:block;margin-top:4px;color:var(--muted)}.brain-auto-button.selected{border-color:#f4b942;background:#2c281b}.brain-auto-button.ready small{color:var(--green)}.brain-auto-button.draft small{color:var(--yellow)}.brain-auto-button.safe small{color:var(--blue)}.brain-footer{display:flex;justify-content:space-between;color:var(--muted);font-family:Consolas,monospace}.selector-details{padding:16px;display:grid;gap:12px}.selector-status{padding:14px;border-left:4px solid var(--yellow);background:var(--panel2)}.selector-status.ready{border-color:var(--green)}.danger-control{padding:11px;background:#b93643;color:#fff;border:1px solid #ff6876;border-radius:4px;cursor:pointer}.danger-control:disabled{opacity:.4;cursor:not-allowed}@media(max-width:900px){.selector-page{grid-template-columns:1fr}.brain-shell{padding:24px}}
+/* FRC dashboard inspired telemetry palette: neutral field, explicit desired/actual colors. */
+:root{--planned-path:#f2b84b;--actual-path:#38c7bd;--field-object:#7fa7d8;--field-grid:#35404b;--field-marking:#9aa5b1}
+body{background:#0d1117}.menu,.tabs,.status,.widget{background:#171d24}.field{background:#202a34;border-color:#46515d}
+.tile{fill:#202a34;stroke:var(--field-grid)}
+.goal{fill:#151b22;stroke:var(--field-object);stroke-width:1.6}
+.path{stroke:var(--planned-path);stroke-width:1.05}
+.done{stroke:var(--actual-path);stroke-width:1.05}
+.robot{fill:#d75d67}.action{background:#222d38}
+#steps .step.active{color:var(--planned-path)}
+.field-key{grid-column:1/-1;display:flex;gap:22px;color:#aeb8c2;font-size:12px;padding:0 4px}
+.field-key b{color:#e6edf3}.key-planned{color:var(--planned-path)}.key-actual{color:var(--actual-path)}
+.override-field-layer{pointer-events:none}.field-tape{fill:none;stroke:#aeb7c0;stroke-width:.65;opacity:.8}.alliance-line{fill:none;stroke-width:.75}.alliance-top{stroke:#d95d66}.alliance-bottom{stroke:#4c9fe8}.field-toggle rect{fill:#d8b84f;stroke:#e6edf3;stroke-width:.3}.field-toggle.red .toggle-center{fill:#d95d66}.field-toggle.blue .toggle-center{fill:#4c9fe8}.field-loader rect{fill:#d5ab35;stroke:#e6edf3;stroke-width:.25}.field-loader path{fill:none;stroke:#171d24;stroke-width:.45}.april-tag rect{fill:#f4f5f7;stroke:#111820;stroke-width:.45}.april-tag text{fill:#111820;font:bold 2.6px Consolas}.field-goal .goal-base{fill:#141a21;stroke:#adb7c1;stroke-width:.8}.field-goal.red .goal-base{stroke:#d95d66}.field-goal.blue .goal-base{stroke:#4c9fe8}.field-goal.tall .goal-base{stroke:#d8b84f;stroke-width:1}.goal-post{fill:#9da7b0}.goal-tier{fill:none;stroke:#d8b84f;stroke-width:.55}.field-piece circle{stroke:#e6edf3;stroke-width:.25}.field-piece.red circle{fill:#d95d66}.field-piece.blue circle{fill:#4c9fe8}.field-piece.yellow circle{fill:#d8b84f}.piece-pin{fill:#aeb7c0}
+</style>
+</head>
+<body>
+<header class="menu"><div><span class="brand">Elastic · VEX Desktop Sim</span>　 File 檔案　 Edit 編輯　 View 檢視</div><span id="gamepadStatus">○ GAMEPAD／搖桿未連線</span></header>
+<nav class="tabs"><button class="active" data-page="teleop">Teleoperated／遙控測試</button><button data-page="selector">Auto Select／選程式</button><button data-page="auto">Autonomous Run／自動執行</button><button data-page="planner">Auto Studio／自動編輯</button></nav>
+<main>
+<section id="selector" class="page selector-page">
+ <div class="brain-shell" aria-label="V5 Brain autonomous selector preview"><div class="brain-screen"><div class="brain-header"><strong>AUTONOMOUS SELECT</strong><span>V5 BRAIN／主機</span></div><div id="brainAutoGrid" class="brain-auto-grid"></div><div class="brain-footer"><span id="brainSelection">SELECT AN AUTO／選擇程式</span><span>480 × 272</span></div></div></div>
+ <aside class="widget"><div class="title"><b>Program Selection／程式選擇</b><span>SIMULATED BRAIN UI</span></div><div class="selector-details"><div id="selectorStatus" class="selector-status">LOADING／讀取中</div><div><b>Compiled Auto／已編譯</b><div id="compiledAutoName" class="value">—</div></div><div><b>Selected Auto／目前選擇</b><div id="selectedAutoName" class="value">—</div></div><p>READY 可以由 C++ Core 執行；DRAFT 必須先到 Auto Studio 儲存並重新建置。／READY can run in the C++ Core; DRAFT must be saved and rebuilt first.</p><button id="openSelectedAuto" class="control">OPEN AUTO RUN／前往執行畫面</button><button id="runSelectedAuto" class="danger-control" disabled>RUN TEST／測試啟動 AUTO</button></div></aside>
+</section>
+<section id="teleop" class="page teleop active">
+ <div class="widget"><div class="title"><b>V5 Controller／遙控器</b><span>Driver Input</span></div><div class="controller">
+  <div class="shoulders"><button class="key" data-hold="lf">L1<small>Lower +／下層正轉</small></button><button class="key" data-hold="lr">L2<small>Lower −／下層反轉</small></button><button class="key" data-hold="bf">R1<small>Both +／上下正轉</small></button><button class="key" data-hold="br">R2<small>Both −／上下反轉</small></button></div>
+  <div class="sticks"><label>VEX Axis3／左輪 <b id="leftText">0%</b></label><input id="left" type="range" min="-100" max="100" value="0"><label>VEX Axis2／右輪 <b id="rightText">0%</b></label><input id="right" type="range" min="-100" max="100" value="0"><label>Drive motor speed／底盤馬達速度 <b id="rpmText">600 RPM</b></label><input id="driveRpm" type="range" min="100" max="600" step="50" value="600"><label for="rightAxisMap">Right stick source／右搖桿來源</label><select id="rightAxisMap"><option value="auto">Auto detect／自動偵測</option><option value="3">Browser Axis 3／標準</option><option value="2">Browser Axis 2／Logitech</option><option value="5">Browser Axis 5／其他</option></select><small id="axisDebug">Raw axes／原始軸：等待搖桿</small></div>
+  <div class="face"><button class="key" data-hold="uf">A<small>Upper +／上層正轉</small></button><button class="key" data-hold="ur">B<small>Upper −／上層反轉</small></button><button class="key" data-toggle="intake">X<small>Intake Toggle／進料切換</small></button><button class="key" data-toggle="scoring">Y<small>Score Toggle／得分切換</small></button><button class="key" data-hold="score">↑<small>Score Hold／得分按住</small></button><button class="key" data-toggle="reject">←<small>Reject／退環</small></button><button class="key" data-toggle="clamp">→<small>Clamp／夾具</small></button><button class="key" data-toggle="align">↓<small>Align／對齊</small></button></div>
+ </div></div>
+ <aside class="side"><div class="widget"><div class="title"><b>Driver Field／遙控場地</b><span id="driverPoseText">X 0.0 · Y 0.0 · H 0°</span></div><svg class="field" id="driverField" viewBox="0 0 100 100" aria-label="遙控模式即時 Override 場地"><g id="driverTiles"></g><path d="M0 0L100 100M100 0L0 100M33 50L50 33L67 50L50 67Z" fill="none" stroke="var(--muted)"/><g id="driverGoals"></g><path id="driverTrail" class="done"/><g id="driverRobot" transform="translate(20 82)"><rect class="robot" x="-4.5" y="-4.5" width="9" height="9" rx="1"/><path fill="var(--text)" d="M-2-3L0-6L2-3Z"/></g></svg></div><div class="widget"><div class="title"><b>Mechanism View／機構示意</b><span id="action">DISABLED／停用</span></div><div class="readout"><div class="robot-diagram"><div class="chassis"><i class="wheel w1"></i><i class="wheel w2"></i><i class="wheel w3"></i><i class="wheel w4"></i><i id="upperLine" class="intake-line upper"></i><i id="lowerLine" class="intake-line lower"></i><i id="rejectLine" class="piston p1"></i><i id="clampLine" class="piston p2"></i><i id="scoreLine" class="piston p3"></i><i id="alignLine" class="piston p4"></i></div></div></div></div>
+ <div class="widget"><div class="title"><b>Subsystem Telemetry／子系統遙測</b><span>LIVE／即時</span></div><div class="readout" id="telemetry"></div><button class="control" id="reset">DISABLE／停用 · RESET／重設</button></div></aside>
+</section>
+<section id="auto" class="page auto">
+ <div class="toolbar"><select id="route"><option value="jar">JAR PID Route／JAR PID 路徑</option><option value="coordinate">Coordinate Route／座標路徑</option></select><button class="control" id="play">▶ RUN／執行</button><button class="control" id="pause">PAUSE／暫停</button><button class="control" id="autoReset">RESET／重設</button></div>
+ <div class="field-key"><b>FIELD 144 × 144 in</b><span>GRID／方格 24 × 24 in</span><span>ORIGIN／原點：左下</span><span class="key-planned">━ DESIRED／規劃</span><span class="key-actual">━ ACTUAL／實際</span></div>
+ <svg class="field" viewBox="0 0 100 100" aria-label="Override field"><g id="tiles"></g><path d="M0 0L100 100M100 0L0 100M33 50L50 33L67 50L50 67Z" fill="none" stroke="var(--muted)"/><g id="goals"></g><path id="path" class="path"/><path id="done" class="done"/><g id="robot" class="pro-robot" transform="translate(20 82)"><rect class="robot robot-body" x="-4.5" y="-4.5" width="9" height="9" rx="1"/><rect class="robot-wheel wheel-fl" x="-5.3" y="-3.5" width="1.2" height="2.5"/><rect class="robot-wheel wheel-rl" x="-5.3" y="1" width="1.2" height="2.5"/><rect class="robot-wheel wheel-fr" x="4.1" y="-3.5" width="1.2" height="2.5"/><rect class="robot-wheel wheel-rr" x="4.1" y="1" width="1.2" height="2.5"/><path class="robot-front" d="M-2-3L0-6L2-3Z"/></g></svg>
+ <aside class="side"><div class="widget"><div class="title"><b>Robot Pose／機器人座標</b><span>LIVE</span></div><div class="readout"><div class="action"><code id="command">WAITING／等待執行</code><div id="pose">X 0.0 · Y 0.0 · H 0°</div></div></div></div><div class="widget"><div class="title"><b>Autonomous Sequence／自動流程</b><span id="autoSource">AUTO JSON</span></div><div id="steps" class="sequence"></div></div></aside>
+</section>
+<section id="planner" class="page planner-page">
+ <div class="planner-view-switch" aria-label="Planner workspace">
+  <button class="active" data-planner-view="path"><span>01</span> PATHS／路徑</button>
+  <button data-planner-view="auto"><span>02</span> AUTO／自動流程</button>
+  <button data-planner-view="commands"><span>03</span> COMMANDS／動作庫</button>
+ </div>
+ <div class="planner-toolbar">
+  <label>Path name／路徑名稱 <input id="pathName" value="skills-path" maxlength="40"></label>
+  <label>Drivetrain／底盤類型 <select id="pathDriveType"><option value="tank">Tank Drive／坦克底盤</option><option value="mecanum">Mecanum／麥克納姆</option></select></label>
+  <button class="control" id="pathNew">NEW／新增</button><button class="control" id="pathUndo">UNDO／復原</button><button class="control" id="pathPlay">▶ PREVIEW／預覽</button><button class="control" id="pathStop">■ STOP／停止</button>
+  <button class="control" id="pathSave">SAVE TO VS CODE／存入 VS Code</button><button class="control" id="pathExport">EXPORT JSON／匯出</button>
+  <label class="control path-import">IMPORT JSON／匯入<input id="pathImport" type="file" accept="application/json,.json"></label>
+ </div>
+ <div class="widget planner-field-widget"><div class="title"><b>Override Field／絕對座標場地</b><span id="pathStatus">Click field to add points／點擊增加路徑點</span><button class="path-layer-button" id="pathFootprintsToggle" aria-pressed="false">FOOTPRINTS OFF／外框關閉</button><button class="path-focus-button" id="pathFocus">⛶ FIELD FOCUS／場地放大</button></div>
+  <svg class="field" id="pathField" viewBox="0 0 100 100" aria-label="Path planning field"><g id="pathTiles"></g><path d="M0 0L100 100M100 0L0 100M33 50L50 33L67 50L50 67Z" fill="none" stroke="var(--muted)"/><g id="pathGoals"></g><g id="pathSweptFootprints"></g><path id="plannedPath" class="path-planned"/><path id="pathPreviewTrail" class="path-preview-trail"/><g id="pathSelectedRobot" class="path-selected-robot pro-robot" hidden><rect class="robot-body"/><rect class="robot-wheel wheel-fl"/><rect class="robot-wheel wheel-rl"/><rect class="robot-wheel wheel-fr"/><rect class="robot-wheel wheel-rr"/><path class="robot-front"/></g><g id="pathWaypoints"></g><g id="pathTangentControl" class="path-tangent-control" hidden><line/><circle r="1.7"/></g><g id="pathPreviewRobot" class="path-preview-robot pro-robot" hidden><rect class="robot-body"/><rect class="robot-wheel wheel-fl"/><rect class="robot-wheel wheel-rl"/><rect class="robot-wheel wheel-fr"/><rect class="robot-wheel wheel-rr"/><path class="robot-front"/></g></svg>
+ </div>
+ <aside class="widget planner-inspector"><div class="title"><b>Waypoint／路徑點</b><span id="selectedPointLabel">No selection／未選取</span></div><div class="readout">
+  <label>X（in）<input id="pointX" type="number" min="0" max="144" step="0.1" disabled></label>
+  <label>Y（in）<input id="pointY" type="number" min="0" max="144" step="0.1" disabled></label>
+  <label>Trajectory tangent／路徑切線 <b id="pointTangentText">AUTO／自動</b><input id="pointTangent" type="range" min="-180" max="180" step="1" value="0" disabled></label>
+  <label>Curve strength／曲率強度 <b id="pointTangentStrengthText">100%</b><input id="pointTangentStrength" type="range" min="20" max="180" step="5" value="100" disabled></label>
+  <button class="control" id="pointTangentAuto" disabled>AUTO TANGENT／恢復自動切線</button>
+  <label>Heading／朝向 <b id="pointHeadingText">0°</b><input id="pointHeading" type="range" min="-180" max="180" step="1" value="0" disabled></label>
+  <label>Velocity／速度 <b id="pointVelocityText">60%</b><input id="pointVelocity" type="range" min="10" max="100" step="5" value="60" disabled></label>
+  <label>Robot width／車寬（in）<input id="robotWidth" type="number" min="6" max="24" step="0.5" value="18"></label>
+  <label>Robot length／車長（in）<input id="robotLength" type="number" min="6" max="24" step="0.5" value="18"></label>
+  <div id="pathCollisionStatus" class="path-clear">CLEAR／路徑未碰撞</div>
+  <button class="control" id="pointDelete" disabled>DELETE POINT／刪除路徑點</button>
+  <pre id="pathCppPreview"><code>// Add points on the field.</code></pre>
+ </div></aside>
+ <section id="autoBuilder" class="auto-builder" hidden>
+  <div class="auto-builder-head"><div><small>02 / AUTONOMOUS COMPOSER</small><h2>BUILD THE WHOLE RUN.</h2></div><label>Auto name／自動名稱<input id="autoName" value="skills-auto" maxlength="40"></label><button class="control amped-primary" id="autoSave">SAVE AUTO／儲存</button></div>
+  <aside class="auto-palette widget"><div class="title"><b>ADD COMMAND／加入動作</b><span>LIBRARY</span></div><div class="auto-palette-list"><div class="palette-scroll-hint">SCROLL FOR ALL／捲動查看全部</div>
+   <button data-add-auto="path">FOLLOW PATH<small>執行路徑</small></button><button data-add-auto="wait">WAIT<small>等待時間</small></button><div id="namedCommandPalette"></div>
+  </div></aside>
+  <div class="auto-timeline widget"><div class="title"><b>SEQUENCE／執行順序</b><span id="autoStepCount">0 COMMANDS</span></div><div id="autoCommandList" class="auto-command-list"></div></div>
+  <aside class="auto-summary widget"><div class="title"><b>OUTPUT／輸出</b><span>VEX C++</span></div><div class="readout"><p id="autoBuilderStatus">Add commands to build an autonomous routine.／加入動作來建立自動流程。</p><pre id="autoCppPreview"></pre><div class="auto-output-note"><b>Robot entry／機器人入口</b><code id="autoRobotEntry"></code></div></div></aside>
+ </section>
+ <section id="commandLibrary" class="command-library" hidden><div class="command-hero"><small>03 / NAMED COMMANDS</small><h2>ONE NAME. ONE ROBOT ACTION.</h2><p>Auto 編輯器使用固定名稱連接既有 VEX 子系統函式；更換硬體時只需修改底層實作。</p></div><div id="commandLibraryGrid" class="command-library-grid"></div></section>
+</section>
+</main><footer class="status"><span>C++ Core <b class="connected">Connected／已連線</b> · Controller <b class="connected">Connected／已連線</b></span><span>Same control code／共用控制程式 · Simplified Physics／簡化物理 · 20 ms</span></footer>
+<script>
+const state={left:0,right:0,upper:0,lower:0,intake:false,reject:false,clamp:false,scoring:false,align:false,scoreHold:false};const $=s=>document.querySelector(s);document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===b.dataset.page))});const modes={uf:[100,0],ur:[-100,0],lf:[0,100],lr:[0,-100],bf:[100,100],br:[-100,-100]};function applyHold(k,on){if(k==='score'){state.scoreHold=on;render();return}if(on)[state.upper,state.lower]=modes[k];else[state.upper,state.lower]=state.intake?[100,100]:[0,0];render()}document.querySelectorAll('[data-hold]').forEach(b=>{const down=e=>{e.preventDefault();b.classList.add('on');applyHold(b.dataset.hold,true)},up=()=>{b.classList.remove('on');applyHold(b.dataset.hold,false)};b.onpointerdown=down;b.onpointerup=up;b.onpointerleave=up;b.onpointercancel=up});document.querySelectorAll('[data-toggle]').forEach(b=>b.onclick=()=>{const k=b.dataset.toggle;state[k]=!state[k];b.classList.toggle('on',state[k]);if(k==='intake')[state.upper,state.lower]=state.intake?[100,100]:[0,0];render()});['left','right'].forEach(k=>$('#'+k).oninput=e=>{state[k]=+e.target.value;$('#'+k+'Text').textContent=state[k]+'%';render()});function render(){const rows=[['Left Drive／左輪',state.left+'%'],['Right Drive／右輪',state.right+'%'],['Upper Intake／上層',state.upper?state.upper+'%':'STOP／停止'],['Lower Intake／下層',state.lower?state.lower+'%':'STOP／停止'],['Reject／退環',state.reject?'EXTEND／伸出':'RETRACT／收回'],['Clamp／夾具',state.clamp?'EXTEND／伸出':'RETRACT／收回'],['Scoring／得分',state.scoring||state.scoreHold?'EXTEND／伸出':'RETRACT／收回'],['Alignment／對齊',state.align?'EXTEND／伸出':'RETRACT／收回']];$('#telemetry').innerHTML=rows.map(r=>`<div class="row"><span>${r[0]}</span><b class="value ${!/STOP|RETRACT|0%/.test(r[1])?'on':''}">${r[1]}</b></div>`).join('');$('#upperLine').classList.toggle('run',state.upper!==0);$('#lowerLine').classList.toggle('run',state.lower!==0);[['rejectLine','reject'],['clampLine','clamp'],['scoreLine',state.scoring||state.scoreHold],['alignLine','align']].forEach(([id,k])=>$('#'+id).classList.toggle('extend',typeof k==='string'?state[k]:k));$('#action').textContent=state.left||state.right||state.upper||state.lower||state.reject||state.clamp||state.scoring||state.align?'ENABLED／啟用':'DISABLED／停用'}$('#reset').onclick=()=>{Object.assign(state,{left:0,right:0,upper:0,lower:0,intake:false,reject:false,clamp:false,scoring:false,align:false,scoreHold:false});$('#left').value=$('#right').value=0;$('#leftText').textContent=$('#rightText').textContent='0%';document.querySelectorAll('.key').forEach(b=>b.classList.remove('on'));Object.assign(driverPose,{x:20,y:82,h:0});driverTrail.splice(0,driverTrail.length,[20,82]);render()};
+const ns='http://www.w3.org/2000/svg',goalPoints=[[16.7,33.3],[16.7,66.7],[33.3,16.7],[66.7,16.7],[50,50],[33.3,83.3],[66.7,83.3],[83.3,33.3],[83.3,66.7]];function createField(tileTarget,goalTarget){for(let y=0;y<6;y++)for(let x=0;x<6;x++){let r=document.createElementNS(ns,'rect');r.setAttribute('class','tile');r.setAttribute('x',x*100/6);r.setAttribute('y',y*100/6);r.setAttribute('width',100/6);r.setAttribute('height',100/6);$(tileTarget).append(r)}goalPoints.forEach(p=>{let c=document.createElementNS(ns,'circle');c.setAttribute('class','goal');c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',3.5);$(goalTarget).append(c)})}createField('#tiles','#goals');createField('#driverTiles','#driverGoals');const driverPose={x:20,y:82,h:0},driverTrail=[[20,82]],drivePhysics={motorRpm:600,wheelDiameterIn:3.75,externalRatio:.66666,trackWidthIn:12,robotRadius:6.4};$('#driveRpm').oninput=e=>{drivePhysics.motorRpm=+e.target.value;$('#rpmText').textContent=drivePhysics.motorRpm+' RPM'};let lastPhysicsTime=performance.now();function updateDriverPhysics(now){const dt=Math.min((now-lastPhysicsTime)/1000,.05);lastPhysicsTime=now;const maxWheelInPerSec=drivePhysics.motorRpm*drivePhysics.externalRatio*Math.PI*drivePhysics.wheelDiameterIn/60,leftInPerSec=maxWheelInPerSec*state.left/100,rightInPerSec=maxWheelInPerSec*state.right/100,linearSvgPerSec=(leftInPerSec+rightInPerSec)/2*100/144,angularDegPerSec=(leftInPerSec-rightInPerSec)/drivePhysics.trackWidthIn*180/Math.PI;driverPose.h=(driverPose.h+angularDegPerSec*dt+360)%360;const heading=driverPose.h*Math.PI/180,nextX=Math.max(drivePhysics.robotRadius,Math.min(100-drivePhysics.robotRadius,driverPose.x+Math.sin(heading)*linearSvgPerSec*dt)),nextY=Math.max(drivePhysics.robotRadius,Math.min(100-drivePhysics.robotRadius,driverPose.y-Math.cos(heading)*linearSvgPerSec*dt));let hitGoal=-1;for(let i=0;i<goalPoints.length;i++){const dx=nextX-goalPoints[i][0],dy=nextY-goalPoints[i][1];if(Math.hypot(dx,dy)<drivePhysics.robotRadius+3.5){hitGoal=i;break}}document.querySelectorAll('#driverGoals .goal').forEach((goal,i)=>goal.classList.toggle('colliding',i===hitGoal));if(hitGoal<0){driverPose.x=nextX;driverPose.y=nextY}if(Math.abs(state.left)+Math.abs(state.right)>2&&hitGoal<0){const last=driverTrail[driverTrail.length-1];if(!last||Math.hypot(driverPose.x-last[0],driverPose.y-last[1])>.18)driverTrail.push([driverPose.x,driverPose.y])}if(driverTrail.length>90)driverTrail.splice(0,driverTrail.length-90);$('#driverRobot').setAttribute('transform',`translate(${driverPose.x} ${driverPose.y}) rotate(${driverPose.h})`);$('#driverTrail').setAttribute('d','M'+driverTrail.map(v=>v.map(n=>n.toFixed(2)).join(' ')).join('L'));$('#driverPoseText').textContent=`X ${((driverPose.x-20)*1.44).toFixed(1)} · Y ${((82-driverPose.y)*1.44).toFixed(1)} · H ${driverPose.h.toFixed(1)}° · ${drivePhysics.motorRpm} RPM${hitGoal>=0?' · COLLISION／碰撞':''}`;requestAnimationFrame(updateDriverPhysics)}requestAnimationFrame(updateDriverPhysics);const routes={jar:[['driveDistanceIn(-6.0, 90.0);',20,86,90],['turnToHeadingDeg(90.0);',20,86,90],['driveDistanceIn(12.0, 90.0);',28.3,86,90],['setIntakeClamp(true);',28.3,86,90]],coordinate:[['setRobotPose(0, 0, 0);',20,82,0],['driveToPoint(0, 24);',20,65.3,0],['turnToPoint(24, 36);',20,65.3,63.4],['driveToPose(24, 36, 90);',36.7,57,90]]};let autoToken=0,paused=false;function build(){let a=routes[$('#route').value],pts=[[20,82],...a.map(x=>[x[1],x[2]])];$('#path').setAttribute('d','M'+pts.map(p=>p.join(' ')).join('L'));$('#steps').innerHTML=a.map((x,i)=>`<div class="step" data-step="${i}"><code>${x[0]}</code></div>`).join('');resetAuto()}function resetAuto(){autoToken++;paused=false;$('#robot').setAttribute('transform','translate(20 82) rotate(0)');$('#done').setAttribute('d','');$('#command').textContent='WAITING／等待執行';$('#pose').textContent='X 0.0 · Y 0.0 · H 0°';document.querySelectorAll('.step').forEach(x=>x.classList.remove('active'))}const sleep=n=>new Promise(r=>setTimeout(r,n));async function play(){const token=++autoToken,a=routes[$('#route').value];let p={x:20,y:82,h:0},trail=[[20,82]];for(let i=0;i<a.length;i++){if(token!==autoToken)return;document.querySelectorAll('.step').forEach((e,j)=>e.classList.toggle('active',i===j));$('#command').textContent=a[i][0];let target={x:a[i][1],y:a[i][2],h:a[i][3]},start={...p};for(let f=1;f<=60;f++){while(paused)await sleep(30);let t=f/60;p={x:start.x+(target.x-start.x)*t,y:start.y+(target.y-start.y)*t,h:start.h+(target.h-start.h)*t};trail.push([p.x,p.y]);$('#robot').setAttribute('transform',`translate(${p.x} ${p.y}) rotate(${p.h})`);$('#done').setAttribute('d','M'+trail.map(v=>v.join(' ')).join('L'));$('#pose').textContent=`X ${((p.x-20)*1.44).toFixed(1)} · Y ${((82-p.y)*1.44).toFixed(1)} · H ${p.h.toFixed(1)}°`;await sleep(20)}}$('#command').textContent='COMPLETE／完成'}$('#play').onclick=play;$('#pause').onclick=()=>paused=!paused;$('#autoReset').onclick=resetAuto;$('#route').onchange=build;build();render();
+</script>
+<script>
+// Browser Gamepad API：使用標準 Xbox / USB Gamepad 配置。
+(()=>{const status=document.querySelector('#gamepadStatus'),previous=[],deadband=0.08,rightAxisMap=document.querySelector('#rightAxisMap'),axisDebug=document.querySelector('#axisDebug');const holdMap={0:'uf',1:'ur',4:'lf',5:'bf',6:'lr',7:'br',12:'score'},toggleMap={2:'intake',3:'scoring',13:'align',14:'reject',15:'clamp'};let activeIndex=null,detectedRightAxis=3;
+function pressed(button){return Boolean(button&&(button.pressed||button.value>0.55))}function findButton(attribute,value){return document.querySelector(`[${attribute}="${value}"]`)}
+function update(){const pads=navigator.getGamepads?navigator.getGamepads():[];let pad=activeIndex===null?null:pads[activeIndex];if(!pad){pad=Array.from(pads).find(Boolean);activeIndex=pad?pad.index:null}
+if(!pad){status.textContent='○ GAMEPAD／搖桿未連線';status.classList.remove('connected');requestAnimationFrame(update);return}
+status.textContent='● '+pad.id+'／搖桿已連線';status.classList.add('connected');const axisValue=i=>Math.abs(pad.axes[i]||0)<deadband?0:Math.round(-(pad.axes[i]||0)*100);if(rightAxisMap.value==='auto')detectedRightAxis=pad.axes.length>3?3:Math.min(2,pad.axes.length-1);else detectedRightAxis=Number(rightAxisMap.value);state.left=axisValue(1);state.right=axisValue(detectedRightAxis);axisDebug.textContent='Raw axes／原始軸：'+pad.axes.map((v,i)=>i+'='+v.toFixed(2)).join(' · ')+' ｜ Right／右='+detectedRightAxis;document.querySelector('#left').value=state.left;document.querySelector('#right').value=state.right;document.querySelector('#leftText').textContent=state.left+'%';document.querySelector('#rightText').textContent=state.right+'%';
+Object.entries(holdMap).forEach(([index,key])=>{const isDown=pressed(pad.buttons[index]),wasDown=Boolean(previous[index]);if(isDown!==wasDown){const button=findButton('data-hold',key);button?.classList.toggle('on',isDown);applyHold(key,isDown)}});Object.entries(toggleMap).forEach(([index,key])=>{const isDown=pressed(pad.buttons[index]);if(isDown&&!previous[index]){state[key]=!state[key];findButton('data-toggle',key)?.classList.toggle('on',state[key]);if(key==='intake')[state.upper,state.lower]=state.intake?[100,100]:[0,0]}});for(let i=0;i<pad.buttons.length;i++)previous[i]=pressed(pad.buttons[i]);render();requestAnimationFrame(update)}
+window.addEventListener('gamepadconnected',event=>{activeIndex=event.gamepad.index;status.textContent='● '+event.gamepad.id+'／搖桿已連線';status.classList.add('connected')});window.addEventListener('gamepaddisconnected',()=>{activeIndex=null;previous.length=0;status.textContent='○ GAMEPAD／搖桿未連線';status.classList.remove('connected')});requestAnimationFrame(update)})();
+</script>
+<script>
+// C++ bridge：畫面只負責輸入與顯示；馬達、按鍵 callback、Auto、JAR PID 都在 vex-sim-core.exe 執行。
+(()=>{
+const command=text=>fetch('/api/command',{method:'POST',headers:{'Content-Type':'text/plain'},body:text}).catch(()=>{});
+// Auto Studio、generated-path.h 與 C++ Core 全部使用 0~144 in 絕對場地座標。
+// 舊版的 +20 / 82 偏移只適用相對座標範例，套在 Generated Auto 會讓整條軌跡平移。
+const toField=s=>({x:s.xIn/1.44,y:100-s.yIn/1.44,h:(s.headingDeg%360+360)%360});
+const autoTrail=[],driverCoreTrail=[];
+let coreState=null,lastButtons=[],autoRunning=false;
+document.querySelector('#driverTrail').style.display='none';
+// 舊 JS 預覽會持續寫入 #driverPoseText；將它導向隱藏節點，避免與 C++ 遙測互搶畫面。
+const driverPoseCoreText=document.querySelector('#driverPoseText');
+driverPoseCoreText.id='driverPoseCoreText';
+const legacyDriverPoseText=document.createElement('span');
+legacyDriverPoseText.id='driverPoseText';legacyDriverPoseText.hidden=true;
+driverPoseCoreText.parentNode.appendChild(legacyDriverPoseText);
+// 舊版 JS 預覽仍會更新 #driverRobot。保留但隱藏它，另建一個只接受 C++ 位姿的車體，
+// 從 DOM 層徹底避免兩套 animation loop 互相覆蓋。
+const driverPreviewRobot=document.querySelector('#driverRobot');
+const driverCoreRobot=driverPreviewRobot.cloneNode(true);
+driverPreviewRobot.style.display='none';
+driverCoreRobot.id='driverRobotCore';
+driverPreviewRobot.parentNode.appendChild(driverCoreRobot);
+
+// Simulator-only drivetrain selector. It does not change robot-config.cpp or the real six-motor chassis.
+state.mecanumStrafe=0;
+const simulatorDriveControls=document.createElement('div');
+simulatorDriveControls.style.display='contents';
+simulatorDriveControls.innerHTML=`<label>Drive mode／底盤模式</label><select id="simDriveMode"><option value="tank">Tank／坦克輪</option><option value="mecanum">Mecanum Field-Centric／麥克納姆絕對方向</option></select><label id="strafeLabel" hidden>Mecanum strafe／左右橫移 <b id="strafeText">0%</b></label><input id="mecanumStrafe" type="range" min="-100" max="100" value="0" hidden>`;
+document.querySelector('.sticks').appendChild(simulatorDriveControls);
+const leftAxisLabel=document.querySelector('#left').previousElementSibling,rightAxisLabel=document.querySelector('#right').previousElementSibling;
+function updateSimulatorDriveMode(){
+  const mecanum=document.querySelector('#simDriveMode').value==='mecanum';
+  document.querySelector('#strafeLabel').hidden=!mecanum;document.querySelector('#mecanumStrafe').hidden=!mecanum;
+  leftAxisLabel.childNodes[0].nodeValue=mecanum?'Forward Axis3／前後 ':'VEX Axis3／左輪 ';
+  rightAxisLabel.childNodes[0].nodeValue=mecanum?'Turn Axis1／旋轉 ':'VEX Axis2／右輪 ';
+}
+document.querySelector('#simDriveMode').onchange=()=>{updateSimulatorDriveMode();command(`mode ${document.querySelector('#simDriveMode').value}`)};updateSimulatorDriveMode();command('mode tank');
+document.querySelector('#mecanumStrafe').oninput=event=>{state.mecanumStrafe=Number(event.target.value);document.querySelector('#strafeText').textContent=state.mecanumStrafe+'%'};
+
+function showCoreState(s){
+  if(s.event==='auto-start'){
+    autoTrail.length=0;document.querySelector('#done').setAttribute('d','');
+    document.querySelector('#command').textContent='STARTING／開始新的自動流程';
+    return;
+  }
+  coreState=s;window.cppCoreConnected=true;
+  const p=toField(s),isAuto=['closed','coordinate','timed','generated'].includes(s.mode);
+  const robot=document.querySelector(isAuto?'#robot':'#driverRobotCore');
+  robot.style.setProperty('transform',`translate(${p.x} ${p.y}) rotate(${p.h})`,'important');
+  if(isAuto){
+    // Auto 驗證必須保留整次路徑；180 點只夠遙控短尾跡，會讓起點在中途消失。
+    autoTrail.push([p.x,p.y]);if(autoTrail.length>2000)autoTrail.shift();
+    document.querySelector('#done').setAttribute('d','M'+autoTrail.map(v=>v.join(' ')).join('L'));
+    document.querySelector('#pose').textContent=`X ${s.xIn.toFixed(1)} · Y ${s.yIn.toFixed(1)} · H ${s.headingDeg.toFixed(1)}°`;
+    document.querySelector('#command').textContent=s.event==='complete'?'COMPLETE／完成':s.event==='auto-error'?'AUTO ERROR／自動流程失敗':`C++ ${s.mode.toUpperCase()} · RUNNING／執行中`;
+    if(s.event==='complete'||s.event==='auto-error')autoRunning=false;
+  }else{
+    driverCoreTrail.push([p.x,p.y]);if(driverCoreTrail.length>45)driverCoreTrail.shift();
+    driverPoseCoreText.textContent=`X ${s.xIn.toFixed(1)} · Y ${s.yIn.toFixed(1)} · H ${p.h.toFixed(1)}° · C++ CORE`;
+  }
+  state.upper=Math.round(s.upperIntakeVolt/12*100);state.lower=Math.round(s.lowerIntakeVolt/12*100);
+  state.reject=s.ringReject;state.clamp=s.intakeClamp;state.scoring=s.scoring;state.align=s.alignment;render();
+}
+new EventSource('/api/events').onmessage=e=>{try{showCoreState(JSON.parse(e.data))}catch{}};
+
+// 舊版預覽動畫也使用 requestAnimationFrame；最後一層固定套用 C++ 回傳位姿，避免被覆蓋。
+function renderCorePose(){
+  if(coreState){
+    const p=toField(coreState),isAuto=['closed','coordinate','timed','generated'].includes(coreState.mode),robot=document.querySelector(isAuto?'#robot':'#driverRobotCore');
+    robot.style.removeProperty('transform');robot.setAttribute('transform',`translate(${p.x} ${p.y}) rotate(${p.h})`);
+    if(!isAuto){
+      // 紅色碰撞提示必須使用 C++ 位姿；舊 JS 預覽位姿可能與實際核心不同。
+      let nearest=-1,nearestDistance=Infinity;
+      goalPoints.forEach((goal,index)=>{const distance=Math.hypot(p.x-goal[0],p.y-goal[1]);if(distance<nearestDistance){nearest=index;nearestDistance=distance}});
+      // 只負責提示；真正碰撞由 C++ 的旋轉方形碰撞盒判斷。
+      const touching=nearestDistance<8.7&&Math.abs(coreState.leftVolt)+Math.abs(coreState.rightVolt)>0.5;
+      document.querySelectorAll('#driverGoals .goal').forEach((goal,index)=>goal.classList.toggle('colliding',touching&&index===nearest));
+    }
+  }
+  requestAnimationFrame(renderCorePose);
+}requestAnimationFrame(renderCorePose);
+
+setInterval(()=>{
+  if(autoRunning||document.visibilityState!=='visible'||!document.hasFocus())return;
+  const mode=document.querySelector('#simDriveMode').value;
+  if(mode==='mecanum'){
+    let forward=state.left,strafe=state.mecanumStrafe,turn=state.right;
+    const pad=Array.from(navigator.getGamepads?.()||[]).find(Boolean);
+    if(pad){
+      const axisPercent=index=>{const raw=pad.axes[index]||0;return Math.abs(raw)<.08?0:Math.round(-raw*100)};
+      forward=axisPercent(1);strafe=-axisPercent(0);
+      const selected=document.querySelector('#rightAxisMap').value;
+      const turnAxis=selected==='auto'?(pad.axes.length>3?3:Math.min(2,pad.axes.length-1)):Number(selected);
+      // Browser Axis 向右是正值；轉成畫面順時針為正的 heading。
+      turn=-axisPercent(turnAxis);
+      state.left=forward;state.right=turn;state.mecanumStrafe=strafe;
+      document.querySelector('#left').value=forward;document.querySelector('#right').value=turn;document.querySelector('#mecanumStrafe').value=strafe;
+      document.querySelector('#leftText').textContent=forward+'%';document.querySelector('#rightText').textContent=turn+'%';document.querySelector('#strafeText').textContent=strafe+'%';
+    }
+    command(`mecanum ${Math.round(forward)} ${Math.round(strafe)} ${Math.round(turn)} 20`);
+  }else command(`drive ${Math.round(state.left)} ${Math.round(state.right)} 20`);
+},20);
+document.querySelector('#driveRpm').addEventListener('input',e=>command(`rpm ${e.target.value}`));
+document.querySelector('#reset').addEventListener('click',()=>{autoTrail.length=0;driverCoreTrail.length=0;command('reset')});
+document.querySelector('#autoReset').addEventListener('click',()=>{autoTrail.length=0;command('reset')});
+document.querySelector('#play').onclick=()=>{autoTrail.length=0;autoRunning=true;command(`auto ${document.querySelector('#route').value==='coordinate'?'coordinate':'closed'}`)};
+
+const vexButton={uf:1,ur:2,intake:3,scoring:4,lf:5,lr:6,bf:7,br:8,score:9,align:10,reject:11,clamp:12};
+document.querySelectorAll('[data-hold],[data-toggle]').forEach(button=>{
+  const key=button.dataset.hold||button.dataset.toggle,id=vexButton[key];
+  if(button.dataset.hold){button.addEventListener('pointerdown',()=>command(`button ${id} 1`));for(const name of ['pointerup','pointerleave','pointercancel'])button.addEventListener(name,()=>command(`button ${id} 0`));}
+  else button.addEventListener('click',()=>command(`tap ${id}`));
+});
+
+const browserToVex={0:1,1:2,2:3,3:4,4:5,6:6,5:7,7:8,12:9,13:10,14:11,15:12};
+setInterval(()=>{if(document.visibilityState!=='visible'||!document.hasFocus())return;const pad=Array.from(navigator.getGamepads?.()||[]).find(Boolean);if(!pad)return;if(document.querySelector('#simDriveMode').value==='mecanum'){const raw=pad.axes[0]||0;state.mecanumStrafe=Math.abs(raw)<.08?0:Math.round(raw*100);document.querySelector('#mecanumStrafe').value=state.mecanumStrafe;document.querySelector('#strafeText').textContent=state.mecanumStrafe+'%'}for(const [browserId,vexId] of Object.entries(browserToVex)){const down=Boolean(pad.buttons[browserId]?.pressed);if(lastButtons[vexId]!==down){lastButtons[vexId]=down;command(`button ${vexId} ${down?1:0}`)}}},20);
+})();
+</script>
+<link rel="stylesheet" href="/path-planner.css?v=12">
+<script src="/path-planner.js?v=10"></script>
+<script src="/auto-builder.js?v=3"></script>
+<script src="/auto-runner-ui.js?v=3"></script>
+<script src="/auto-selector.js?v=1"></script>
+</body></html>

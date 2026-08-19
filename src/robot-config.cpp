@@ -1,46 +1,47 @@
 #include "vex.h"
 
 using namespace vex;
-using signature = vision::signature;
-using code = vision::code;
 
-// A global instance of brain used for printing to the V5 Brain screen
 brain Brain;
+controller primaryController = controller(primary);
 
-// VEXcode device constructors
-motor L1 = motor(PORT1, ratio6_1, true);
-motor L2 = motor(PORT2, ratio6_1, false);
-motor L3 = motor(PORT3, ratio6_1, true);
-motor R1 = motor(PORT7, ratio6_1, false);
-motor R2 = motor(PORT8, ratio6_1, true);
-motor R3 = motor(PORT9, ratio6_1, false);
-inertial Inertial = inertial(PORT12);
-controller Controller1 = controller(primary);
-motor intake = motor(PORT14, ratio6_1, true);
-optical Optical = optical(PORT7);
-optical Optical_go = optical(PORT16);
-motor intakedown = motor(PORT11, ratio6_1, false);
-digital_out pushCylinder = digital_out(Brain.ThreeWirePort.A);
-digital_out intakeCylander = digital_out(Brain.ThreeWirePort.B);
-digital_out redlight = digital_out(Brain.ThreeWirePort.C);
-digital_out whitelight = digital_out(Brain.ThreeWirePort.D);
-digital_out shooter = digital_out(Brain.ThreeWirePort.G);
-digital_out aligner = digital_out(Brain.ThreeWirePort.H);
-motor hang1 = motor(PORT19, ratio36_1, true);
-vex::vision Vision1 = vex::vision(vex::PORT13, 50);
-vex::vision Vision2 = vex::vision(vex::PORT15, 50);
+// 保留舊專案的 Port、齒輪匣及反轉設定，名稱統一重新定義。
+motor leftDriveFront = motor(PORT1, ratio6_1, true);
+motor leftDriveMiddle = motor(PORT2, ratio6_1, false);
+motor leftDriveRear = motor(PORT3, ratio6_1, true);
+motor rightDriveFront = motor(PORT7, ratio6_1, false);
+motor rightDriveMiddle = motor(PORT8, ratio6_1, true);
+motor rightDriveRear = motor(PORT9, ratio6_1, false);
 
-// 88
-//  VEXcode generated functions
-//  define variable for remote controller enable/disable
-bool RemoteControlCodeEnabled = true;
+motor_group leftDrive = motor_group(
+  leftDriveFront, leftDriveMiddle, leftDriveRear);
+motor_group rightDrive = motor_group(
+  rightDriveFront, rightDriveMiddle, rightDriveRear);
 
-/**
- * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
- *
- * This should be called at the start of your int main function.
- */
-void vexcodeInit(void)
+inertial imuSensor = inertial(PORT12);
+
+// Intake Port 沿用競賽版本。若實機接線不同，只修改本檔即可。
+motor intakeUpperMotor = motor(PORT14, ratio6_1, true);
+motor intakeLowerMotor = motor(PORT11, ratio6_1, false);
+
+// Brain 三線接孔的 Digital Out 可接電磁閥。
+// true / false 所代表的實際伸出方向，需依氣管接法在實機確認。
+digital_out ringRejectPiston = digital_out(Brain.ThreeWirePort.A);
+digital_out intakeClampPiston = digital_out(Brain.ThreeWirePort.B);
+digital_out scoringPiston = digital_out(Brain.ThreeWirePort.G);
+digital_out alignmentPiston = digital_out(Brain.ThreeWirePort.H);
+
+void vexcodeInit()
 {
-  // nothing to initialize
+  leftDrive.setStopping(coast);
+  rightDrive.setStopping(coast);
+
+  intakeUpperMotor.setStopping(coast);
+  intakeLowerMotor.setStopping(coast);
+
+  // 開機時先回到安全狀態，避免程式啟動瞬間誤動作。
+  ringRejectPiston.set(false);
+  intakeClampPiston.set(false);
+  scoringPiston.set(false);
+  alignmentPiston.set(false);
 }

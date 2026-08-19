@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "name": "tutorial-auto",
+  "commands": [
+    {
+      "type": "intake-forward"
+    },
+    {
+      "type": "path",
+      "pathName": "test"
+    },
+    {
+      "type": "intake-stop"
+    },
+    {
+      "type": "clamp-on"
+    },
+    {
+      "type": "wait",
+      "seconds": 0.25
+    },
+    {
+      "type": "stop-all"
+    }
+  ]
+}
