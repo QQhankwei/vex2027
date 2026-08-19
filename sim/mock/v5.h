@@ -52,6 +52,7 @@ struct RobotState
   bool scoring=false;
   bool alignment=false;
   double elapsedMs=0;
+  double motorRpmLimit=600;
 };
 
 std::shared_ptr<MotorState> motorState(int port);

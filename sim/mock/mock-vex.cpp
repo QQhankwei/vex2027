@@ -108,6 +108,7 @@ void advance(double milliseconds)
     if(translationIsClear(robot.xIn,nextY,robot.headingDeg))robot.yIn=nextY;
   }
   robot.elapsedMs+=milliseconds;
+  robot.motorRpmLimit=maximumMotorRpm;
   inertials[12]=robot.headingDeg;
   if(telemetryCallback)telemetryCallback(robot);
 }
@@ -170,7 +171,7 @@ void advanceMecanum(double forwardPercent,double strafePercent,double turnPercen
     if(translationIsClear(nextX,robot.yIn,robot.headingDeg))robot.xIn=nextX;
     if(translationIsClear(robot.xIn,nextY,robot.headingDeg))robot.yIn=nextY;
   }
-  robot.elapsedMs+=milliseconds;inertials[12]=robot.headingDeg;
+  robot.elapsedMs+=milliseconds;robot.motorRpmLimit=maximumMotorRpm;inertials[12]=robot.headingDeg;
   if(telemetryCallback)telemetryCallback(robot);
 }
 
@@ -206,6 +207,6 @@ int controllerAxis(int axis){return axis>=0&&axis<static_cast<int>(axes.size())?
 void setControllerButton(int button,bool pressed){if(button>=0&&button<static_cast<int>(buttons.size()))buttons[button]=pressed;}
 bool controllerButton(int button){return button>=0&&button<static_cast<int>(buttons.size())?buttons[button]:false;}
 void setTelemetryCallback(std::function<void(const RobotState&)> callback){telemetryCallback=std::move(callback);}
-void setMaximumMotorRpm(double rpm){maximumMotorRpm=std::clamp(rpm,100.0,600.0);}
+void setMaximumMotorRpm(double rpm){maximumMotorRpm=std::clamp(rpm,100.0,600.0);robot.motorRpmLimit=maximumMotorRpm;}
 void setFieldCollisionsEnabled(bool enabled){fieldCollisionsEnabled=enabled;}
 }

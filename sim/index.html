@@ -26,11 +26,17 @@ body{background:#0d1117}.menu,.tabs,.status,.widget{background:#171d24}.field{ba
 .field-key{grid-column:1/-1;display:flex;gap:22px;color:#aeb8c2;font-size:12px;padding:0 4px}
 .field-key b{color:#e6edf3}.key-planned{color:var(--planned-path)}.key-actual{color:var(--actual-path)}
 .override-field-layer{pointer-events:none}.field-tape{fill:none;stroke:#aeb7c0;stroke-width:.65;opacity:.8}.alliance-line{fill:none;stroke-width:.75}.alliance-top{stroke:#d95d66}.alliance-bottom{stroke:#4c9fe8}.field-toggle rect{fill:#d8b84f;stroke:#e6edf3;stroke-width:.3}.field-toggle.red .toggle-center{fill:#d95d66}.field-toggle.blue .toggle-center{fill:#4c9fe8}.field-loader rect{fill:#d5ab35;stroke:#e6edf3;stroke-width:.25}.field-loader path{fill:none;stroke:#171d24;stroke-width:.45}.april-tag rect{fill:#f4f5f7;stroke:#111820;stroke-width:.45}.april-tag text{fill:#111820;font:bold 2.6px Consolas}.field-goal .goal-base{fill:#141a21;stroke:#adb7c1;stroke-width:.8}.field-goal.red .goal-base{stroke:#d95d66}.field-goal.blue .goal-base{stroke:#4c9fe8}.field-goal.tall .goal-base{stroke:#d8b84f;stroke-width:1}.goal-post{fill:#9da7b0}.goal-tier{fill:none;stroke:#d8b84f;stroke-width:.55}.field-piece circle{stroke:#e6edf3;stroke-width:.25}.field-piece.red circle{fill:#d95d66}.field-piece.blue circle{fill:#4c9fe8}.field-piece.yellow circle{fill:#d8b84f}.piece-pin{fill:#aeb7c0}
+.dashboard-strip{display:grid;grid-template-columns:1.15fr .8fr 2fr;gap:1px;background:var(--line);border-bottom:1px solid var(--line)}.dash-block{min-height:74px;padding:10px 16px;background:#111820;display:flex;align-items:center;gap:12px}.dash-block label,.dash-label{display:block;color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}.dash-source select{margin-top:5px;min-width:180px;padding:6px;background:var(--panel2);color:var(--text);border:1px solid var(--line)}.connection-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 10px color-mix(in srgb,var(--green) 65%,transparent)}.connection-dot.waiting{background:var(--yellow)}.match-clock{font:700 32px Consolas,monospace;font-variant-numeric:tabular-nums}.match-phase{color:var(--yellow);font-weight:700}.dash-actions{margin-left:auto;display:flex;gap:7px}.dash-actions button{padding:7px 10px}.telemetry-summary{display:grid;grid-template-columns:repeat(5,minmax(86px,1fr));gap:7px;width:100%}.metric{border-left:2px solid var(--line);padding-left:9px}.metric b{display:block;margin-top:3px;font:600 17px Consolas,monospace}.metric.warn b{color:var(--yellow)}.metric.good b{color:var(--green)}@media(max-width:1050px){.dashboard-strip{grid-template-columns:1fr 1fr}.dash-telemetry{grid-column:1/-1}.telemetry-summary{grid-template-columns:repeat(5,1fr)}}@media(max-width:700px){.dashboard-strip{grid-template-columns:1fr}.dash-telemetry{grid-column:auto}.telemetry-summary{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 <header class="menu"><div><span class="brand">Elastic · VEX Desktop Sim</span>　 File 檔案　 Edit 編輯　 View 檢視</div><span id="gamepadStatus">○ GAMEPAD／搖桿未連線</span></header>
 <nav class="tabs"><button class="active" data-page="teleop">Teleoperated／遙控測試</button><button data-page="selector">Auto Select／選程式</button><button data-page="auto">Autonomous Run／自動執行</button><button data-page="planner">Auto Studio／自動編輯</button></nav>
+<section class="dashboard-strip" aria-label="Robot dashboard status">
+ <div class="dash-block dash-source"><i id="robotConnectionDot" class="connection-dot"></i><div><label for="telemetrySource">Data Source／資料來源</label><select id="telemetrySource"><option value="simulator">SIMULATION／模擬</option><option value="robot">LIVE ROBOT／實機</option></select><div id="robotConnectionText" class="value">C++ CORE CONNECTED／核心已連線</div></div></div>
+ <div class="dash-block"><div><span class="dash-label">Practice Match／練習計時</span><div id="matchClock" class="match-clock">2:00.0</div><div id="matchPhase" class="match-phase">READY／準備</div></div><div class="dash-actions"><button id="matchStart" class="control">START／開始</button><button id="matchReset" class="control">RESET／重設</button></div></div>
+ <div class="dash-block dash-telemetry"><div class="telemetry-summary"><div class="metric good"><span class="dash-label">Battery／電量</span><b id="dashBattery">100%</b></div><div class="metric"><span class="dash-label">IMU／陀螺儀</span><b id="dashImu">0.0°</b></div><div class="metric"><span class="dash-label">Left／左輪</span><b id="dashLeftRpm">0 RPM</b></div><div class="metric"><span class="dash-label">Right／右輪</span><b id="dashRightRpm">0 RPM</b></div><div class="metric"><span class="dash-label">Motor Max／最高溫</span><b id="dashTemperature">25°C</b></div></div></div>
+</section>
 <main>
 <section id="selector" class="page selector-page">
  <div class="brain-shell" aria-label="V5 Brain autonomous selector preview"><div class="brain-screen"><div class="brain-header"><strong>AUTONOMOUS SELECT</strong><span>V5 BRAIN／主機</span></div><div id="brainAutoGrid" class="brain-auto-grid"></div><div class="brain-footer"><span id="brainSelection">SELECT AN AUTO／選擇程式</span><span>480 × 272</span></div></div></div>
@@ -153,6 +159,7 @@ function showCoreState(s){
     return;
   }
   coreState=s;window.cppCoreConnected=true;
+  window.dispatchEvent(new CustomEvent('vex-telemetry',{detail:s}));
   const p=toField(s),isAuto=['closed','coordinate','timed','generated'].includes(s.mode);
   const robot=document.querySelector(isAuto?'#robot':'#driverRobotCore');
   robot.style.setProperty('transform',`translate(${p.x} ${p.y}) rotate(${p.h})`,'important');
@@ -223,6 +230,29 @@ document.querySelectorAll('[data-hold],[data-toggle]').forEach(button=>{
 
 const browserToVex={0:1,1:2,2:3,3:4,4:5,6:6,5:7,7:8,12:9,13:10,14:11,15:12};
 setInterval(()=>{if(document.visibilityState!=='visible'||!document.hasFocus())return;const pad=Array.from(navigator.getGamepads?.()||[]).find(Boolean);if(!pad)return;if(document.querySelector('#simDriveMode').value==='mecanum'){const raw=pad.axes[0]||0;state.mecanumStrafe=Math.abs(raw)<.08?0:Math.round(raw*100);document.querySelector('#mecanumStrafe').value=state.mecanumStrafe;document.querySelector('#strafeText').textContent=state.mecanumStrafe+'%'}for(const [browserId,vexId] of Object.entries(browserToVex)){const down=Boolean(pad.buttons[browserId]?.pressed);if(lastButtons[vexId]!==down){lastButtons[vexId]=down;command(`button ${vexId} ${down?1:0}`)}}},20);
+})();
+</script>
+<script>
+// Dashboard shell：計時器不控制機器；Telemetry 顯示與 SIM / LIVE 資料來源分離。
+(()=>{
+const source=document.querySelector('#telemetrySource'),dot=document.querySelector('#robotConnectionDot'),connection=document.querySelector('#robotConnectionText');
+const value=(id,text)=>document.querySelector(id).textContent=text;
+function setConnection(){const live=source.value==='robot';dot.classList.toggle('waiting',live);connection.textContent=live?'WAITING FOR USB ROBOT／等待實機 USB':'C++ CORE CONNECTED／核心已連線'}
+source.onchange=setConnection;setConnection();
+window.addEventListener('vex-telemetry',event=>{
+  const packet=event.detail;if(source.value!=='simulator'||packet.source!=='simulator')return;
+  value('#dashBattery',`${Math.round(packet.batteryPct??100)}%`);
+  value('#dashImu',`${Number(packet.headingDeg??packet.imuHeadingDeg??0).toFixed(1)}°`);
+  value('#dashLeftRpm',`${Math.round(packet.leftRpm??0)} RPM`);
+  value('#dashRightRpm',`${Math.round(packet.rightRpm??0)} RPM`);
+  value('#dashTemperature',`${Number(packet.hottestDriveC??25).toFixed(1)}°C`);
+});
+
+const totalMs=120000,autoMs=15000;let remainingMs=totalMs,running=false,lastTick=0,frame=0;
+function renderClock(){const minutes=Math.floor(remainingMs/60000),seconds=(remainingMs%60000)/1000;value('#matchClock',`${minutes}:${seconds.toFixed(1).padStart(4,'0')}`);value('#matchPhase',remainingMs===0?'MATCH COMPLETE／比賽結束':remainingMs>totalMs-autoMs?'AUTONOMOUS／自動 15s':remainingMs<totalMs-autoMs?'DRIVER／遙控 1:45':'TRANSITION／切換')}
+function tick(now){if(!running)return;remainingMs=Math.max(0,remainingMs-(now-lastTick));lastTick=now;renderClock();if(remainingMs===0){running=false;document.querySelector('#matchStart').textContent='START／開始';return}frame=requestAnimationFrame(tick)}
+document.querySelector('#matchStart').onclick=()=>{running=!running;document.querySelector('#matchStart').textContent=running?'PAUSE／暫停':'START／開始';if(running){lastTick=performance.now();frame=requestAnimationFrame(tick)}else cancelAnimationFrame(frame)};
+document.querySelector('#matchReset').onclick=()=>{running=false;cancelAnimationFrame(frame);remainingMs=totalMs;document.querySelector('#matchStart').textContent='START／開始';value('#matchClock','2:00.0');value('#matchPhase','READY／準備')};
 })();
 </script>
 <link rel="stylesheet" href="/path-planner.css?v=12">

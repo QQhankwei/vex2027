@@ -23,6 +23,7 @@ void preAutonomous()
   }
 
   initializeAutoSelector();
+  startTelemetry();
 }
 
 /** 執行 Auto Studio 最後一次儲存並產生到 VS Code 的流程。 */

@@ -11,7 +11,9 @@ std::string activeMode="idle";
 void printState(const vex::simulation::RobotState& state,const char* event="state")
 {
   std::cout << "{\"event\":\"" << event << "\",\"mode\":\"" << activeMode
-    << "\",\"xIn\":" << state.xIn << ",\"yIn\":" << state.yIn
+    << "\",\"version\":1,\"source\":\"simulator\",\"enabled\":" << (activeMode=="idle"?"false":"true")
+    << ",\"batteryPct\":100,\"imuCalibrating\":false"
+    << ",\"xIn\":" << state.xIn << ",\"yIn\":" << state.yIn
     << ",\"headingDeg\":" << state.headingDeg << ",\"leftVolt\":" << state.leftVolt
     << ",\"rightVolt\":" << state.rightVolt << ",\"upperIntakeVolt\":" << state.upperIntakeVolt
     << ",\"lowerIntakeVolt\":" << state.lowerIntakeVolt
@@ -19,6 +21,13 @@ void printState(const vex::simulation::RobotState& state,const char* event="stat
     << ",\"intakeClamp\":" << (state.intakeClamp?"true":"false")
     << ",\"scoring\":" << (state.scoring?"true":"false")
     << ",\"alignment\":" << (state.alignment?"true":"false")
+    << ",\"leftEncoderDeg\":" << leftDrive.position(vex::degrees)
+    << ",\"rightEncoderDeg\":" << rightDrive.position(vex::degrees)
+    << ",\"leftRpm\":" << state.leftVolt/12.0*state.motorRpmLimit
+    << ",\"rightRpm\":" << state.rightVolt/12.0*state.motorRpmLimit
+    << ",\"hottestDriveC\":" << 25.0+std::max(std::abs(state.leftVolt),std::abs(state.rightVolt))*1.5
+    << ",\"upperIntakeRpm\":" << state.upperIntakeVolt/12.0*state.motorRpmLimit
+    << ",\"lowerIntakeRpm\":" << state.lowerIntakeVolt/12.0*state.motorRpmLimit
     << ",\"elapsedMs\":" << state.elapsedMs << "}" << std::endl;
 }
 

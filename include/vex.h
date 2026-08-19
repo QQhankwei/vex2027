@@ -21,6 +21,7 @@ using namespace vex;
 #include "pneumatic-control.h"
 #include "driver-control.h"
 #include "tracking-odometry.h"
+#include "telemetry.h"
 #include "autonomous-routines.h"
 #include "JAR-Template/util.h"
 #include "JAR-Template/PID.h"
