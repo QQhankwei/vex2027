@@ -5,7 +5,9 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 
 const simDirectory = fileURLToPath(new URL("./", import.meta.url));
-const projectDirectory = normalize(join(simDirectory, ".."));
+// Desktop 安裝版把可寫入的 Auto / Path workspace 放在使用者資料夾。
+// 開發模式沒有設定環境變數時，仍直接使用目前 VS Code 專案。
+const projectDirectory = normalize(process.env.VEX_PROJECT_DIR || join(simDirectory, ".."));
 const port = Number(process.env.VEX_SIM_PORT || 4173);
 const corePath = join(simDirectory, "bin", "vex-sim-core.exe");
 const core = spawn(corePath, [], { stdio: ["pipe", "pipe", "pipe"] });

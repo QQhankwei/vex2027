@@ -1,4 +1,7 @@
 /bin
 /build
 *.obj
+node_modules/
+dist/
+.build-tools/
 compile_commands.json

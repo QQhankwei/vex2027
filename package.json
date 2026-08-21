@@ -1,0 +1,67 @@
+{
+  "name": "riftiory-robot-console",
+  "version": "0.1.0",
+  "description": "RIFTIORY robot operations, simulation and autonomous planning console.",
+  "main": "desktop/main.cjs",
+  "author": "RIFTIORY",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "desktop": "electron desktop/main.cjs",
+    "dist:win": "electron-builder --win nsis portable"
+  },
+  "devDependencies": {
+    "electron": "43.4.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "io.riftiory.robotconsole",
+    "productName": "RIFTIORY Robot Console",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "desktop/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "sim",
+        "to": "runtime/sim",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "autos",
+        "to": "runtime/workspace/autos",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "paths",
+        "to": "runtime/workspace/paths",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "include",
+        "to": "runtime/workspace/include",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "RIFTIORY Robot Console",
+      "artifactName": "RIFTIORY-Robot-Console-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "RIFTIORY-Robot-Console-Portable-${version}.${ext}"
+    }
+  }
+}
+
