@@ -42,7 +42,12 @@
         <g id="mechanismRobot">
           <rect class="mechanism-chassis" x="220" y="430" width="280" height="58" rx="10"/>
           <circle class="mechanism-wheel" cx="270" cy="490" r="27"/><circle class="mechanism-wheel" cx="450" cy="490" r="27"/>
-          <line class="mechanism-rail" x1="315" y1="426" x2="315" y2="95"/><line class="mechanism-rail" x1="405" y1="426" x2="405" y2="95"/>
+          <g id="elevatorStages">
+            <line class="mechanism-rail stage-1" x1="315" y1="426" x2="315" y2="300"/><line class="mechanism-rail stage-1" x1="405" y1="426" x2="405" y2="300"/>
+            <g id="elevatorStage2"><line class="mechanism-rail stage-2" x1="323" y1="390" x2="323" y2="264"/><line class="mechanism-rail stage-2" x1="397" y1="390" x2="397" y2="264"/></g>
+            <g id="elevatorStage3"><line class="mechanism-rail stage-3" x1="331" y1="354" x2="331" y2="228"/><line class="mechanism-rail stage-3" x1="389" y1="354" x2="389" y2="228"/></g>
+            <g id="elevatorStage4"><line class="mechanism-rail stage-4" x1="339" y1="318" x2="339" y2="192"/><line class="mechanism-rail stage-4" x1="381" y1="318" x2="381" y2="192"/></g>
+          </g>
           <g id="mechanismCarriage">
             <rect class="mechanism-carriage" x="300" y="390" width="120" height="34" rx="5"/>
             <g id="mechanismArm">
@@ -72,6 +77,14 @@
         <div class="mechanism-panel-body"><div id="mechanismPresets" class="mechanism-preset-grid"></div></div>
       </section>
       <section class="mechanism-panel">
+        <header class="mechanism-panel-title"><b>Continuous Motion／連續動作</b><span>4-STAGE ELEVATOR DEMO</span></header>
+        <div class="mechanism-panel-body">
+          <div id="mechanismTimeline" class="mechanism-timeline">${Array.from({length:5},(_,index)=>`<i class="mechanism-timeline-step" data-motion-step="${index}"></i>`).join('')}</div>
+          <div class="mechanism-speed"><span>Transition speed／動作速度</span><select id="mechanismMotionSpeed"><option value="1800">SLOW／慢速</option><option value="1100" selected>NORMAL／正常</option><option value="650">FAST／快速</option></select></div>
+          <div class="mechanism-sequence-actions"><button id="mechanismPlaySequence" class="control">▶ PLAY／播放</button><button id="mechanismStopSequence" class="control">■ STOP／停止</button></div>
+        </div>
+      </section>
+      <section class="mechanism-panel">
         <header class="mechanism-panel-title"><b>Calculated Pose／計算結果</b><span>INCHES + DEGREES</span></header>
         <div class="mechanism-panel-body">
           <div class="mechanism-readout">
@@ -87,11 +100,15 @@
   const $ = selector => document.querySelector(selector);
   const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value)));
   const state = { heightIn: 0, angleDeg: 90 };
+  let motionToken = 0;
+  let sequenceToken = 0;
 
   function renderPose() {
     const p = mechanismParameters;
     const heightRatio = (state.heightIn - p.elevatorMinHeightIn) / (p.elevatorMaxHeightIn - p.elevatorMinHeightIn);
     const carriageY = 390 - heightRatio * 285;
+    // 四階 Elevator：每一活動階分攤總行程，呈現連續伸縮關係。
+    const stageTravel = heightRatio * 95;
     const svgArmAngle = -state.angleDeg;
     const radians = state.angleDeg * Math.PI / 180;
     const toolXIn = Math.cos(radians) * p.armLengthIn;
@@ -99,6 +116,9 @@
     const groundCollision = toolYIn < 0;
 
     $('#mechanismCarriage').setAttribute('transform', `translate(0 ${carriageY - 390})`);
+    $('#elevatorStage2').setAttribute('transform', `translate(0 ${-stageTravel})`);
+    $('#elevatorStage3').setAttribute('transform', `translate(0 ${-stageTravel * 2})`);
+    $('#elevatorStage4').setAttribute('transform', `translate(0 ${-stageTravel * 3})`);
     $('#mechanismArm').setAttribute('transform', `rotate(${svgArmAngle} 360 407)`);
     $('#mechanismHeightLine').setAttribute('y1', carriageY + 17);
     $('#mechanismHeightLine').setAttribute('y2', carriageY + 17);
@@ -126,6 +146,8 @@
    * @param {number} armAngleDeg Arm 相對水平面的角度，向上為正，單位 degree。
    */
   window.setElevatorArmPose = (elevatorHeightIn, armAngleDeg) => {
+    sequenceToken++;
+    motionToken++;
     const p = mechanismParameters;
     state.heightIn = clamp(elevatorHeightIn, p.elevatorMinHeightIn, p.elevatorMaxHeightIn);
     state.angleDeg = clamp(armAngleDeg, p.armMinAngleDeg, p.armMaxAngleDeg);
@@ -133,13 +155,74 @@
     return { ...state };
   };
 
+  /**
+   * 以連續動畫移動到指定姿態。
+   * Elevator 與 Arm 同時依平滑曲線運動，方便觀察中途是否碰撞。
+   * @returns {Promise<boolean>} true 代表完成；false 代表被新命令中止。
+   */
+  window.moveElevatorArmPose = (elevatorHeightIn, armAngleDeg, durationMs = 1100) => {
+    const p = mechanismParameters;
+    const targetHeight = clamp(elevatorHeightIn, p.elevatorMinHeightIn, p.elevatorMaxHeightIn);
+    const targetAngle = clamp(armAngleDeg, p.armMinAngleDeg, p.armMaxAngleDeg);
+    const startHeight = state.heightIn;
+    const startAngle = state.angleDeg;
+    const duration = Math.max(100, Number(durationMs));
+    const token = ++motionToken;
+    const startTime = performance.now();
+    $('#mechanismStatus').textContent = 'MOVING／機構移動中';
+
+    return new Promise(resolve => {
+      function animate(now) {
+        if (token !== motionToken) { resolve(false); return; }
+        const progress = Math.min(1, (now - startTime) / duration);
+        // Smoothstep：起步與停止都減速，較接近真實機構而非線性瞬移。
+        const eased = progress * progress * (3 - 2 * progress);
+        state.heightIn = startHeight + (targetHeight - startHeight) * eased;
+        state.angleDeg = startAngle + (targetAngle - startAngle) * eased;
+        renderPose();
+        if (progress < 1) requestAnimationFrame(animate);
+        else resolve(true);
+      }
+      requestAnimationFrame(animate);
+    });
+  };
+
   $('#elevatorHeight').addEventListener('input', event => window.setElevatorArmPose(event.target.value, state.angleDeg));
   $('#armAngle').addEventListener('input', event => window.setElevatorArmPose(state.heightIn, event.target.value));
   $('#mechanismPresets').innerHTML = Object.entries(presets).map(([id, pose]) => `<button class="mechanism-preset" data-preset="${id}">${pose.label}<small>${pose.heightIn.toFixed(1)} in · ${pose.angleDeg.toFixed(1)}°</small></button>`).join('');
   document.querySelectorAll('.mechanism-preset').forEach(button => button.addEventListener('click', () => {
     const pose = presets[button.dataset.preset];
-    window.setElevatorArmPose(pose.heightIn, pose.angleDeg);
+    sequenceToken++;
+    window.moveElevatorArmPose(pose.heightIn, pose.angleDeg, Number($('#mechanismMotionSpeed').value));
   }));
+
+  const continuousSequence = [presets.stowed, presets.intake, { label: 'CLEARANCE／抬升避障', heightIn: 14, angleDeg: 45 }, presets.high, presets.stowed];
+  function setTimeline(activeIndex, completeThrough = -1) {
+    document.querySelectorAll('.mechanism-timeline-step').forEach((step, index) => {
+      step.classList.toggle('active', index === activeIndex);
+      step.classList.toggle('complete', index <= completeThrough);
+    });
+  }
+  $('#mechanismPlaySequence').onclick = async () => {
+    const currentSequenceToken = ++sequenceToken;
+    const duration = Number($('#mechanismMotionSpeed').value);
+    for (let index = 0; index < continuousSequence.length; index++) {
+      if (currentSequenceToken !== sequenceToken) return;
+      setTimeline(index, index - 1);
+      const pose = continuousSequence[index];
+      const completed = await window.moveElevatorArmPose(pose.heightIn, pose.angleDeg, duration);
+      if (!completed || currentSequenceToken !== sequenceToken) return;
+      if (index < continuousSequence.length - 1) await new Promise(resolve => setTimeout(resolve, 180));
+    }
+    setTimeline(-1, continuousSequence.length - 1);
+    $('#mechanismStatus').textContent = 'SEQUENCE COMPLETE／連續動作完成';
+  };
+  $('#mechanismStopSequence').onclick = () => {
+    sequenceToken++;
+    motionToken++;
+    setTimeline(-1, -1);
+    $('#mechanismStatus').textContent = 'MOTION STOPPED／動作已停止';
+  };
 
   // dashboard-v2 已處理既有頁籤；動態加入的機構頁籤在此補上相同行為。
   tab.addEventListener('click', () => {
