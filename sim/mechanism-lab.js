@@ -11,7 +11,7 @@
     elevatorMaxHeightIn: 32.0,
     armMinAngleDeg: -20.0,
     armMaxAngleDeg: 135.0,
-    armLengthIn: 18.0,
+    armLengthIn: 12.0,
     carriageBaseHeightIn: 8.0
   });
 
@@ -49,16 +49,16 @@
             <g id="elevatorStage4"><line class="mechanism-rail stage-4" x1="339" y1="426" x2="339" y2="300"/><line class="mechanism-rail stage-4" x1="381" y1="426" x2="381" y2="300"/></g>
           </g>
           <g id="mechanismCarriage">
-            <rect class="mechanism-carriage" x="300" y="390" width="120" height="34" rx="5"/>
+            <rect class="mechanism-carriage" x="300" y="282" width="120" height="34" rx="5"/>
             <g id="mechanismArm">
-              <line class="mechanism-arm-outline" x1="360" y1="407" x2="520" y2="407"/>
-              <line class="mechanism-arm" x1="360" y1="407" x2="520" y2="407"/>
-              <circle class="mechanism-pivot" cx="360" cy="407" r="12"/>
-              <path class="mechanism-tool" d="M508 388 L548 395 L548 419 L508 426 Z"/>
+              <line class="mechanism-arm-outline" x1="360" y1="299" x2="467" y2="299"/>
+              <line class="mechanism-arm" x1="360" y1="299" x2="467" y2="299"/>
+              <circle class="mechanism-pivot" cx="360" cy="299" r="12"/>
+              <path class="mechanism-tool" d="M458 284 L492 290 L492 308 L458 314 Z"/>
             </g>
           </g>
-          <line id="mechanismHeightLine" class="mechanism-dimension" x1="190" y1="407" x2="285" y2="407"/>
-          <text id="mechanismHeightText" class="mechanism-dimension-text" x="190" y="398">0.0 in</text>
+          <line id="mechanismHeightLine" class="mechanism-dimension" x1="190" y1="299" x2="285" y2="299"/>
+          <text id="mechanismHeightText" class="mechanism-dimension-text" x="190" y="290">0.0 in</text>
           <text id="mechanismGroundWarning" class="mechanism-ground-warning" x="455" y="470" hidden>GROUND COLLISION／碰地</text>
         </g>
       </svg>
@@ -112,7 +112,7 @@
     const heightRatio = (state.heightIn - p.elevatorMinHeightIn) / (p.elevatorMaxHeightIn - p.elevatorMinHeightIn);
     // 四階 Elevator：每一活動階分攤總行程，呈現連續伸縮關係。
     const stageTravel = heightRatio * 95;
-    const carriageY = 390 - stageTravel * 3;
+    const carriageY = 282 - stageTravel * 3;
     const svgArmAngle = -state.angleDeg;
     const radians = state.angleDeg * Math.PI / 180;
     const toolXIn = Math.cos(radians) * p.armLengthIn;
@@ -122,7 +122,7 @@
     $('#elevatorStage2').setAttribute('transform', `translate(0 ${-stageTravel})`);
     $('#elevatorStage3').setAttribute('transform', `translate(0 ${-stageTravel * 2})`);
     $('#elevatorStage4').setAttribute('transform', `translate(0 ${-stageTravel * 3})`);
-    $('#mechanismArm').setAttribute('transform', `rotate(${svgArmAngle} 360 407)`);
+    $('#mechanismArm').setAttribute('transform', `rotate(${svgArmAngle} 360 299)`);
     $('#mechanismHeightLine').setAttribute('y1', carriageY + 17);
     $('#mechanismHeightLine').setAttribute('y2', carriageY + 17);
     $('#mechanismHeightText').setAttribute('y', carriageY + 8);
