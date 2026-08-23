@@ -41,15 +41,19 @@
         <line class="mechanism-floor" x1="35" y1="515" x2="685" y2="515"/>
         <g id="mechanismRobot">
           <g id="mechanismChassis">
-            <path class="mechanism-frame-deck" d="M205 422 L515 422 L500 445 L220 445 Z"/>
-            <rect class="mechanism-frame-rail" x="210" y="449" width="300" height="26" rx="4"/>
-            <path class="mechanism-frame-brace" d="M235 450 L300 424 M485 450 L420 424"/>
-            <circle class="mechanism-frame-hole" cx="255" cy="435" r="4"/><circle class="mechanism-frame-hole" cx="285" cy="435" r="4"/>
-            <circle class="mechanism-frame-hole" cx="435" cy="435" r="4"/><circle class="mechanism-frame-hole" cx="465" cy="435" r="4"/>
-            <g class="mechanism-motor-module"><rect class="mechanism-motor" x="325" y="439" width="70" height="29" rx="5"/><rect class="mechanism-motor-cap" x="375" y="443" width="13" height="21" rx="2"/></g>
-            <g transform="translate(245 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-wheel-tread" r="24"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
-            <g transform="translate(360 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-wheel-tread" r="24"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
-            <g transform="translate(475 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-wheel-tread" r="24"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
+            <rect class="vex-c-channel" x="198" y="421" width="324" height="24" rx="2"/>
+            <rect class="vex-c-channel-inner" x="205" y="427" width="310" height="12" rx="1"/>
+            ${Array.from({length:13},(_,index)=>`<circle class="vex-structure-hole" cx="${216+index*24}" cy="433" r="4.1"/>`).join('')}
+            <rect class="vex-c-channel" x="204" y="461" width="312" height="22" rx="2"/>
+            <rect class="vex-c-channel-inner" x="211" y="467" width="298" height="10" rx="1"/>
+            ${Array.from({length:13},(_,index)=>`<circle class="vex-structure-hole" cx="${216+index*24}" cy="472" r="3.8"/>`).join('')}
+            <path class="vex-brace" d="M218 458 L274 445 M502 458 L446 445"/>
+            <path class="vex-gusset" d="M205 421 L238 421 L205 454 Z"/><path class="vex-gusset" d="M515 421 L482 421 L515 454 Z"/>
+            <g transform="translate(225 443)"><rect class="vex-motor-body" x="0" y="0" width="64" height="30" rx="6"/><rect class="vex-motor-detail" x="7" y="6" width="32" height="18" rx="3"/><circle class="vex-cartridge" cx="51" cy="15" r="9"/><text class="vex-motor-label" x="11" y="18">V5</text></g>
+            <g transform="translate(431 443)"><rect class="vex-motor-body" x="0" y="0" width="64" height="30" rx="6"/><rect class="vex-motor-detail" x="7" y="6" width="32" height="18" rx="3"/><circle class="vex-cartridge" cx="51" cy="15" r="9"/><text class="vex-motor-label" x="11" y="18">V5</text></g>
+            <g transform="translate(245 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
+            <g transform="translate(360 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
+            <g transform="translate(475 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
           </g>
           <g id="elevatorStages">
             <line class="mechanism-rail stage-1" x1="315" y1="426" x2="315" y2="300"/><line class="mechanism-rail stage-1" x1="405" y1="426" x2="405" y2="300"/>
