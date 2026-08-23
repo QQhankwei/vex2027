@@ -40,7 +40,7 @@
         </g>
         <line class="mechanism-floor" x1="35" y1="515" x2="685" y2="515"/>
         <g id="mechanismRobot">
-          <g id="mechanismChassis">
+          <g id="mechanismChassis" hidden>
             <path class="vex-front-skid" d="M82 473 L132 430 L252 430 L236 486 L100 486 Z"/>
             <path class="vex-front-edge" d="M85 476 L129 435"/>
             <rect class="vex-c-channel" x="125" y="421" width="455" height="24" rx="2"/>
@@ -57,11 +57,11 @@
             <g transform="translate(445 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
             <g transform="translate(550 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
           </g>
-          <g id="elevatorStages" transform="translate(100 0)">
-            <line class="mechanism-rail stage-1" x1="315" y1="426" x2="315" y2="300"/><line class="mechanism-rail stage-1" x1="405" y1="426" x2="405" y2="300"/>
-            <g id="elevatorStage2"><line class="mechanism-rail stage-2" x1="323" y1="426" x2="323" y2="300"/><line class="mechanism-rail stage-2" x1="397" y1="426" x2="397" y2="300"/></g>
-            <g id="elevatorStage3"><line class="mechanism-rail stage-3" x1="331" y1="426" x2="331" y2="300"/><line class="mechanism-rail stage-3" x1="389" y1="426" x2="389" y2="300"/></g>
-            <g id="elevatorStage4"><line class="mechanism-rail stage-4" x1="339" y1="426" x2="339" y2="300"/><line class="mechanism-rail stage-4" x1="381" y1="426" x2="381" y2="300"/></g>
+          <g id="elevatorStages">
+            <line class="mechanism-rail stage-1" x1="315" y1="500" x2="315" y2="300"/><line class="mechanism-rail stage-1" x1="405" y1="500" x2="405" y2="300"/>
+            <g id="elevatorStage2"><line class="mechanism-rail stage-2" x1="323" y1="500" x2="323" y2="300"/><line class="mechanism-rail stage-2" x1="397" y1="500" x2="397" y2="300"/></g>
+            <g id="elevatorStage3"><line class="mechanism-rail stage-3" x1="331" y1="500" x2="331" y2="300"/><line class="mechanism-rail stage-3" x1="389" y1="500" x2="389" y2="300"/></g>
+            <g id="elevatorStage4"><line class="mechanism-rail stage-4" x1="339" y1="500" x2="339" y2="300"/><line class="mechanism-rail stage-4" x1="381" y1="500" x2="381" y2="300"/></g>
           </g>
           <g id="mechanismCarriage">
             <g id="mechanismArm">
