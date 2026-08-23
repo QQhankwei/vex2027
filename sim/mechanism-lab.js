@@ -11,8 +11,8 @@
     elevatorMaxHeightIn: 32.0,
     armMinAngleDeg: -100.0,
     armMaxAngleDeg: 135.0,
-    armLengthIn: 12.0,
-    carriageBaseHeightIn: 14.0
+    armLengthIn: 15.0,
+    carriageBaseHeightIn: 18.0
   });
 
   const presets = Object.freeze({
@@ -41,21 +41,23 @@
         <line class="mechanism-floor" x1="35" y1="515" x2="685" y2="515"/>
         <g id="mechanismRobot">
           <g id="mechanismChassis">
-            <rect class="vex-c-channel" x="198" y="421" width="324" height="24" rx="2"/>
-            <rect class="vex-c-channel-inner" x="205" y="427" width="310" height="12" rx="1"/>
-            ${Array.from({length:13},(_,index)=>`<circle class="vex-structure-hole" cx="${216+index*24}" cy="433" r="4.1"/>`).join('')}
-            <rect class="vex-c-channel" x="204" y="461" width="312" height="22" rx="2"/>
-            <rect class="vex-c-channel-inner" x="211" y="467" width="298" height="10" rx="1"/>
-            ${Array.from({length:13},(_,index)=>`<circle class="vex-structure-hole" cx="${216+index*24}" cy="472" r="3.8"/>`).join('')}
-            <path class="vex-brace" d="M218 458 L274 445 M502 458 L446 445"/>
-            <path class="vex-gusset" d="M205 421 L238 421 L205 454 Z"/><path class="vex-gusset" d="M515 421 L482 421 L515 454 Z"/>
-            <g transform="translate(225 443)"><rect class="vex-motor-body" x="0" y="0" width="64" height="30" rx="6"/><rect class="vex-motor-detail" x="7" y="6" width="32" height="18" rx="3"/><circle class="vex-cartridge" cx="51" cy="15" r="9"/><text class="vex-motor-label" x="11" y="18">V5</text></g>
-            <g transform="translate(431 443)"><rect class="vex-motor-body" x="0" y="0" width="64" height="30" rx="6"/><rect class="vex-motor-detail" x="7" y="6" width="32" height="18" rx="3"/><circle class="vex-cartridge" cx="51" cy="15" r="9"/><text class="vex-motor-label" x="11" y="18">V5</text></g>
-            <g transform="translate(245 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
-            <g transform="translate(360 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
-            <g transform="translate(475 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
+            <path class="vex-front-skid" d="M82 473 L132 430 L252 430 L236 486 L100 486 Z"/>
+            <path class="vex-front-edge" d="M85 476 L129 435"/>
+            <rect class="vex-c-channel" x="125" y="421" width="455" height="24" rx="2"/>
+            <rect class="vex-c-channel-inner" x="132" y="427" width="441" height="12" rx="1"/>
+            ${Array.from({length:19},(_,index)=>`<circle class="vex-structure-hole" cx="${144+index*23}" cy="433" r="4.1"/>`).join('')}
+            <rect class="vex-c-channel" x="232" y="461" width="350" height="22" rx="2"/>
+            <rect class="vex-c-channel-inner" x="239" y="467" width="336" height="10" rx="1"/>
+            ${Array.from({length:15},(_,index)=>`<circle class="vex-structure-hole" cx="${248+index*23}" cy="472" r="3.8"/>`).join('')}
+            <path class="vex-brace" d="M145 420 L250 460 M570 458 L510 445"/>
+            <path class="vex-gusset" d="M125 421 L160 421 L125 455 Z"/><path class="vex-gusset" d="M579 421 L544 421 L579 454 Z"/>
+            <g transform="translate(305 443)"><rect class="vex-motor-body" x="0" y="0" width="64" height="30" rx="6"/><rect class="vex-motor-detail" x="7" y="6" width="32" height="18" rx="3"/><circle class="vex-cartridge" cx="51" cy="15" r="9"/><text class="vex-motor-label" x="11" y="18">V5</text></g>
+            <g transform="translate(455 443)"><rect class="vex-motor-body" x="0" y="0" width="64" height="30" rx="6"/><rect class="vex-motor-detail" x="7" y="6" width="32" height="18" rx="3"/><circle class="vex-cartridge" cx="51" cy="15" r="9"/><text class="vex-motor-label" x="11" y="18">V5</text></g>
+            <g transform="translate(335 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
+            <g transform="translate(445 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
+            <g transform="translate(550 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-omni-roller" r="25"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
           </g>
-          <g id="elevatorStages">
+          <g id="elevatorStages" transform="translate(100 0)">
             <line class="mechanism-rail stage-1" x1="315" y1="426" x2="315" y2="300"/><line class="mechanism-rail stage-1" x1="405" y1="426" x2="405" y2="300"/>
             <g id="elevatorStage2"><line class="mechanism-rail stage-2" x1="323" y1="426" x2="323" y2="300"/><line class="mechanism-rail stage-2" x1="397" y1="426" x2="397" y2="300"/></g>
             <g id="elevatorStage3"><line class="mechanism-rail stage-3" x1="331" y1="426" x2="331" y2="300"/><line class="mechanism-rail stage-3" x1="389" y1="426" x2="389" y2="300"/></g>
@@ -63,11 +65,11 @@
           </g>
           <g id="mechanismCarriage">
             <g id="mechanismArm">
-              <path class="mechanism-arm-outline" d="M350 287 L470 292 L470 306 L350 311 Z"/>
-              <path class="mechanism-arm" d="M354 290 L467 294 L467 304 L354 308 Z"/>
-              <path class="mechanism-arm-cutout" d="M378 296 L447 297.5 L447 301.5 L378 303 Z"/>
+              <path class="mechanism-arm-outline" d="M370 287 L238 292 L238 306 L370 311 Z"/>
+              <path class="mechanism-arm" d="M366 290 L242 294 L242 304 L366 308 Z"/>
+              <path class="mechanism-arm-cutout" d="M342 296 L262 297.5 L262 301.5 L342 303 Z"/>
               <circle class="mechanism-pivot" cx="360" cy="299" r="12"/>
-              <path class="mechanism-tool" d="M458 284 L492 290 L492 308 L458 314 Z"/>
+              <path class="mechanism-tool" d="M250 284 L216 290 L216 308 L250 314 Z"/>
             </g>
           </g>
           <line id="mechanismHeightLine" class="mechanism-dimension" x1="190" y1="299" x2="285" y2="299"/>
@@ -126,7 +128,8 @@
     // 四階 Elevator：每一活動階分攤總行程，呈現連續伸縮關係。
     const stageTravel = heightRatio * 95;
     const carriageY = 282 - stageTravel * 3;
-    const svgArmAngle = -state.angleDeg;
+    // 車頭朝左：Arm 的基準方向為左方，正角度代表向上抬升。
+    const svgArmAngle = state.angleDeg;
     const radians = state.angleDeg * Math.PI / 180;
     const toolXIn = Math.cos(radians) * p.armLengthIn;
     const toolYIn = p.carriageBaseHeightIn + state.heightIn + Math.sin(radians) * p.armLengthIn;
