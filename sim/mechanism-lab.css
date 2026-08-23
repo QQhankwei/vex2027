@@ -6,8 +6,16 @@
 .mechanism-canvas { width: 100%; height: 570px; display: block; }
 .mechanism-grid line { stroke: #23303e; stroke-width: 1; }
 .mechanism-floor { stroke: #647286; stroke-width: 3; }
-.mechanism-chassis { fill: #161f2a; stroke: #8b7cff; stroke-width: 2; }
-.mechanism-wheel { fill: #080c11; stroke: #68778a; stroke-width: 2; }
+.mechanism-frame-rail { fill: #202b37; stroke: #66768a; stroke-width: 2; }
+.mechanism-frame-deck { fill: #121a23; stroke: #8b7cff; stroke-width: 2; }
+.mechanism-frame-brace { fill: none; stroke: #526174; stroke-width: 7; stroke-linecap: round; }
+.mechanism-frame-hole { fill: #0a0f16; stroke: #728196; stroke-width: 1; }
+.mechanism-motor { fill: #293748; stroke: #8a9aae; stroke-width: 1.5; }
+.mechanism-motor-cap { fill: #8b7cff; opacity: .75; }
+.mechanism-wheel { fill: #070b10; stroke: #7a899d; stroke-width: 3; }
+.mechanism-wheel-tread { fill: none; stroke: #313e4d; stroke-width: 6; stroke-dasharray: 5 4; }
+.mechanism-wheel-hub { fill: #263342; stroke: #9aabbe; stroke-width: 2; }
+.mechanism-wheel-axle { fill: #8b7cff; }
 .mechanism-rail { stroke-width: 11; stroke-linecap: round; }
 .mechanism-rail.stage-1 { stroke: #3d4a5c; }
 .mechanism-rail.stage-2 { stroke: #53647a; }

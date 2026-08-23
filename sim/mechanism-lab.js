@@ -38,10 +38,19 @@
           ${[90,180,270,360,450,540,630].map(x => `<line x1="${x}" y1="25" x2="${x}" y2="525"/>`).join('')}
           ${[75,150,225,300,375,450,525].map(y => `<line x1="35" y1="${y}" x2="685" y2="${y}"/>`).join('')}
         </g>
-        <line class="mechanism-floor" x1="35" y1="500" x2="685" y2="500"/>
+        <line class="mechanism-floor" x1="35" y1="515" x2="685" y2="515"/>
         <g id="mechanismRobot">
-          <rect class="mechanism-chassis" x="220" y="430" width="280" height="58" rx="10"/>
-          <circle class="mechanism-wheel" cx="270" cy="490" r="27"/><circle class="mechanism-wheel" cx="450" cy="490" r="27"/>
+          <g id="mechanismChassis">
+            <path class="mechanism-frame-deck" d="M205 422 L515 422 L500 445 L220 445 Z"/>
+            <rect class="mechanism-frame-rail" x="210" y="449" width="300" height="26" rx="4"/>
+            <path class="mechanism-frame-brace" d="M235 450 L300 424 M485 450 L420 424"/>
+            <circle class="mechanism-frame-hole" cx="255" cy="435" r="4"/><circle class="mechanism-frame-hole" cx="285" cy="435" r="4"/>
+            <circle class="mechanism-frame-hole" cx="435" cy="435" r="4"/><circle class="mechanism-frame-hole" cx="465" cy="435" r="4"/>
+            <g class="mechanism-motor-module"><rect class="mechanism-motor" x="325" y="439" width="70" height="29" rx="5"/><rect class="mechanism-motor-cap" x="375" y="443" width="13" height="21" rx="2"/></g>
+            <g transform="translate(245 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-wheel-tread" r="24"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
+            <g transform="translate(360 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-wheel-tread" r="24"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
+            <g transform="translate(475 484)"><circle class="mechanism-wheel" r="31"/><circle class="mechanism-wheel-tread" r="24"/><circle class="mechanism-wheel-hub" r="11"/><circle class="mechanism-wheel-axle" r="4"/></g>
+          </g>
           <g id="elevatorStages">
             <line class="mechanism-rail stage-1" x1="315" y1="426" x2="315" y2="300"/><line class="mechanism-rail stage-1" x1="405" y1="426" x2="405" y2="300"/>
             <g id="elevatorStage2"><line class="mechanism-rail stage-2" x1="323" y1="426" x2="323" y2="300"/><line class="mechanism-rail stage-2" x1="397" y1="426" x2="397" y2="300"/></g>
@@ -59,7 +68,7 @@
           </g>
           <line id="mechanismHeightLine" class="mechanism-dimension" x1="190" y1="299" x2="285" y2="299"/>
           <text id="mechanismHeightText" class="mechanism-dimension-text" x="190" y="290">0.0 in</text>
-          <text id="mechanismGroundWarning" class="mechanism-ground-warning" x="455" y="470" hidden>GROUND COLLISION／碰地</text>
+          <text id="mechanismGroundWarning" class="mechanism-ground-warning" x="455" y="405" hidden>GROUND COLLISION／碰地</text>
         </g>
       </svg>
     </section>
