@@ -44,9 +44,9 @@
           <circle class="mechanism-wheel" cx="270" cy="490" r="27"/><circle class="mechanism-wheel" cx="450" cy="490" r="27"/>
           <g id="elevatorStages">
             <line class="mechanism-rail stage-1" x1="315" y1="426" x2="315" y2="300"/><line class="mechanism-rail stage-1" x1="405" y1="426" x2="405" y2="300"/>
-            <g id="elevatorStage2"><line class="mechanism-rail stage-2" x1="323" y1="390" x2="323" y2="264"/><line class="mechanism-rail stage-2" x1="397" y1="390" x2="397" y2="264"/></g>
-            <g id="elevatorStage3"><line class="mechanism-rail stage-3" x1="331" y1="354" x2="331" y2="228"/><line class="mechanism-rail stage-3" x1="389" y1="354" x2="389" y2="228"/></g>
-            <g id="elevatorStage4"><line class="mechanism-rail stage-4" x1="339" y1="318" x2="339" y2="192"/><line class="mechanism-rail stage-4" x1="381" y1="318" x2="381" y2="192"/></g>
+            <g id="elevatorStage2"><line class="mechanism-rail stage-2" x1="323" y1="426" x2="323" y2="300"/><line class="mechanism-rail stage-2" x1="397" y1="426" x2="397" y2="300"/></g>
+            <g id="elevatorStage3"><line class="mechanism-rail stage-3" x1="331" y1="426" x2="331" y2="300"/><line class="mechanism-rail stage-3" x1="389" y1="426" x2="389" y2="300"/></g>
+            <g id="elevatorStage4"><line class="mechanism-rail stage-4" x1="339" y1="426" x2="339" y2="300"/><line class="mechanism-rail stage-4" x1="381" y1="426" x2="381" y2="300"/></g>
           </g>
           <g id="mechanismCarriage">
             <rect class="mechanism-carriage" x="300" y="390" width="120" height="34" rx="5"/>
@@ -103,19 +103,22 @@
   let motionToken = 0;
   let sequenceToken = 0;
 
+  // Carriage 與 Arm 必須實際掛在最內側第 4 階，而不是只使用相同位移數值。
+  // 因為 SVG transform 會由父層傳遞，第 4 階移動時整組末端機構必定一起移動。
+  $('#elevatorStage4').append($('#mechanismCarriage'));
+
   function renderPose() {
     const p = mechanismParameters;
     const heightRatio = (state.heightIn - p.elevatorMinHeightIn) / (p.elevatorMaxHeightIn - p.elevatorMinHeightIn);
-    const carriageY = 390 - heightRatio * 285;
     // 四階 Elevator：每一活動階分攤總行程，呈現連續伸縮關係。
     const stageTravel = heightRatio * 95;
+    const carriageY = 390 - stageTravel * 3;
     const svgArmAngle = -state.angleDeg;
     const radians = state.angleDeg * Math.PI / 180;
     const toolXIn = Math.cos(radians) * p.armLengthIn;
     const toolYIn = p.carriageBaseHeightIn + state.heightIn + Math.sin(radians) * p.armLengthIn;
     const groundCollision = toolYIn < 0;
 
-    $('#mechanismCarriage').setAttribute('transform', `translate(0 ${carriageY - 390})`);
     $('#elevatorStage2').setAttribute('transform', `translate(0 ${-stageTravel})`);
     $('#elevatorStage3').setAttribute('transform', `translate(0 ${-stageTravel * 2})`);
     $('#elevatorStage4').setAttribute('transform', `translate(0 ${-stageTravel * 3})`);
