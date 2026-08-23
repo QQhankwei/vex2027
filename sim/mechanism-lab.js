@@ -9,14 +9,14 @@
   const mechanismParameters = Object.freeze({
     elevatorMinHeightIn: 0.0,
     elevatorMaxHeightIn: 32.0,
-    armMinAngleDeg: -20.0,
+    armMinAngleDeg: -100.0,
     armMaxAngleDeg: 135.0,
     armLengthIn: 12.0,
-    carriageBaseHeightIn: 8.0
+    carriageBaseHeightIn: 14.0
   });
 
   const presets = Object.freeze({
-    stowed: { label: 'STOWED／收納', heightIn: 0, angleDeg: 90 },
+    stowed: { label: 'STOWED／收納', heightIn: 0, angleDeg: -90 },
     intake: { label: 'INTAKE／取物', heightIn: 2, angleDeg: 5 },
     low: { label: 'LOW SCORE／低位', heightIn: 12, angleDeg: 35 },
     high: { label: 'HIGH SCORE／高位', heightIn: 30, angleDeg: 65 }
@@ -49,10 +49,10 @@
             <g id="elevatorStage4"><line class="mechanism-rail stage-4" x1="339" y1="426" x2="339" y2="300"/><line class="mechanism-rail stage-4" x1="381" y1="426" x2="381" y2="300"/></g>
           </g>
           <g id="mechanismCarriage">
-            <rect class="mechanism-carriage" x="300" y="282" width="120" height="34" rx="5"/>
             <g id="mechanismArm">
-              <line class="mechanism-arm-outline" x1="360" y1="299" x2="467" y2="299"/>
-              <line class="mechanism-arm" x1="360" y1="299" x2="467" y2="299"/>
+              <path class="mechanism-arm-outline" d="M350 287 L470 292 L470 306 L350 311 Z"/>
+              <path class="mechanism-arm" d="M354 290 L467 294 L467 304 L354 308 Z"/>
+              <path class="mechanism-arm-cutout" d="M378 296 L447 297.5 L447 301.5 L378 303 Z"/>
               <circle class="mechanism-pivot" cx="360" cy="299" r="12"/>
               <path class="mechanism-tool" d="M458 284 L492 290 L492 308 L458 314 Z"/>
             </g>
@@ -68,7 +68,7 @@
         <header class="mechanism-panel-title"><b>Pose Command／姿態命令</b><span>SIMULATION ONLY</span></header>
         <div class="mechanism-panel-body">
           <div class="mechanism-control"><label for="elevatorHeight"><span>Elevator height／升降高度</span><b id="elevatorHeightValue">0.0 in</b></label><input id="elevatorHeight" type="range" min="0" max="32" step="0.1" value="0"></div>
-          <div class="mechanism-control"><label for="armAngle"><span>Arm angle／手臂角度</span><b id="armAngleValue">90.0°</b></label><input id="armAngle" type="range" min="-20" max="135" step="0.5" value="90"></div>
+          <div class="mechanism-control"><label for="armAngle"><span>Arm angle／手臂角度</span><b id="armAngleValue">-90.0°</b></label><input id="armAngle" type="range" min="-100" max="135" step="0.5" value="-90"></div>
           <div id="mechanismStatus" class="mechanism-status">POSE VALID／姿態有效</div>
         </div>
       </section>
@@ -91,7 +91,7 @@
             <div class="mechanism-metric"><small>Tool X／末端 X</small><b id="toolXValue">0.0 in</b></div>
             <div class="mechanism-metric"><small>Tool Y／末端 Y</small><b id="toolYValue">0.0 in</b></div>
           </div>
-          <pre id="mechanismCode" class="mechanism-code">setElevatorArmPose(0.0, 90.0);</pre>
+          <pre id="mechanismCode" class="mechanism-code">setElevatorArmPose(0.0, -90.0);</pre>
         </div>
       </section>
     </aside>`;
@@ -99,7 +99,7 @@
 
   const $ = selector => document.querySelector(selector);
   const clamp = (value, min, max) => Math.max(min, Math.min(max, Number(value)));
-  const state = { heightIn: 0, angleDeg: 90 };
+  const state = { heightIn: 0, angleDeg: -90 };
   let motionToken = 0;
   let sequenceToken = 0;
 
@@ -233,5 +233,5 @@
     document.querySelectorAll('.tabs button').forEach(node => node.classList.toggle('active', node === tab));
   });
   window.mechanismParameters = mechanismParameters;
-  window.setElevatorArmPose(0, 90);
+  window.setElevatorArmPose(0, -90);
 })();

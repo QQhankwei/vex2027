@@ -13,9 +13,9 @@
 .mechanism-rail.stage-2 { stroke: #53647a; }
 .mechanism-rail.stage-3 { stroke: #697e99; }
 .mechanism-rail.stage-4 { stroke: #8199b6; }
-.mechanism-carriage { fill: #8b7cff; stroke: #dcd8ff; stroke-width: 2; }
-.mechanism-arm { stroke: #f3bd57; stroke-width: 12; stroke-linecap: round; }
-.mechanism-arm-outline { stroke: #fff1c8; stroke-width: 16; stroke-linecap: round; opacity: .18; }
+.mechanism-arm { fill: #d9a83f; stroke: #f4ce72; stroke-width: 2; stroke-linejoin: round; }
+.mechanism-arm-outline { fill: #fff1c8; opacity: .12; }
+.mechanism-arm-cutout { fill: #111821; stroke: #7d622c; stroke-width: 1; }
 .mechanism-pivot { fill: #0b1118; stroke: #f3bd57; stroke-width: 4; }
 .mechanism-tool { fill: #141c26; stroke: #55dda0; stroke-width: 3; }
 .mechanism-dimension { stroke: #76869a; stroke-width: 1; stroke-dasharray: 4 4; }
