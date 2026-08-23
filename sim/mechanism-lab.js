@@ -74,7 +74,7 @@
           </g>
           <line id="mechanismHeightLine" class="mechanism-dimension" x1="190" y1="299" x2="285" y2="299"/>
           <text id="mechanismHeightText" class="mechanism-dimension-text" x="190" y="290">0.0 in</text>
-          <text id="mechanismGroundWarning" class="mechanism-ground-warning" x="455" y="405" hidden>GROUND COLLISION／碰地</text>
+          <text id="mechanismGroundWarning" class="mechanism-ground-warning is-hidden" x="455" y="405">GROUND COLLISION／碰地</text>
         </g>
       </svg>
     </section>
@@ -143,7 +143,8 @@
     $('#mechanismHeightLine').setAttribute('y2', carriageY + 17);
     $('#mechanismHeightText').setAttribute('y', carriageY + 8);
     $('#mechanismHeightText').textContent = `${state.heightIn.toFixed(1)} in`;
-    $('#mechanismGroundWarning').toggleAttribute('hidden', !groundCollision);
+    // SVG 元素不使用 HTML hidden 屬性，改以 class 控制實際顯示狀態。
+    $('#mechanismGroundWarning').classList.toggle('is-hidden', !groundCollision);
     $('#elevatorHeight').value = state.heightIn;
     $('#armAngle').value = state.angleDeg;
     $('#elevatorHeightValue').textContent = `${state.heightIn.toFixed(1)} in`;
